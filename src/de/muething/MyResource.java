@@ -20,6 +20,6 @@ public class MyResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getIt() {
-        return "Got it!";
+        return "Got it?!";
     }
 }

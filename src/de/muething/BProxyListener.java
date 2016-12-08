@@ -37,7 +37,7 @@ public class BProxyListener implements ProxyListener, PersistentConnectionListen
 
 		
 		
-		return true;
+		return false;
 	}
 
 }
