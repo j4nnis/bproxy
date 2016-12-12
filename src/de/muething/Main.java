@@ -8,6 +8,9 @@ import org.xml.sax.SAXException;
 import org.zaproxy.zap.control.ControlOverrides;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
+
+import de.muething.proxying.BProxyListener;
+
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.log4j.Appender;
@@ -128,7 +131,7 @@ public class Main {
 		
 	
 		proxy = new Proxy(model, override);
-		listener = new BProxyListener();
+		listener = new BProxyListener("test", 0);
 		proxy.addProxyListener(listener);
 		proxy.addPersistentConnectionListener(listener);
 		
