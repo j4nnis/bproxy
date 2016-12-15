@@ -6,7 +6,7 @@ public class Report {
 	public ArrayList<ReportRecord> legend;
 	public ArrayList<ArrayList<ReportRecord>> values;
 	
-	class ReportRecord {
+	public class ReportRecord {
 		String value;
 		String detail;
 	}

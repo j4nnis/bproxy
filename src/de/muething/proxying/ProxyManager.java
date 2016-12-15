@@ -23,13 +23,15 @@ public class ProxyManager {
 		} while (proxies.containsKey(uniqueID));
 		
 		
-		ManagedProxy mProxy = new ManagedProxy();
+		ManagedProxy mProxy = new ManagedProxy(uniqueID);
 		proxies.put(uniqueID, mProxy);
 		
 		return mProxy;
 	}
 
-	
+	void newSessionWithProxy() {
+		//set 
+	}
 	
 }
 
