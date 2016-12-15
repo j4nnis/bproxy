@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.parosproxy.paros.control.Proxy;
-import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.xml.sax.SAXException;
@@ -20,22 +19,29 @@ import org.zaproxy.zap.control.ControlOverrides;
 import de.muething.DatabaseDriver;
 import de.muething.interfaces.ProxyJITAnalyzer;
 import de.muething.interfaces.ProxyPreparator;
+import de.muething.interfaces.ProxyRequestResponseAnalyzer;
 import de.muething.models.PersistedRequest;
+import de.muething.modules.DomainCounter;
 
 public class ManagedProxy implements PersistentConnectionListener{
 	public static final int MIN_PORT_NUMBER = 1100;
 
 	public static final int MAX_PORT_NUMBER = 49151;
 	
-	Proxy proxy;
+	public Proxy proxy;
 	
 	int sessionNo = -1;
 	
 	private List<ProxyJITAnalyzer> analyzers = new LinkedList<ProxyJITAnalyzer>();
 	private List<ProxyPreparator> preparators = new LinkedList<ProxyPreparator>();
+	private List<ProxyRequestResponseAnalyzer> requestResponseAnalyzers = new LinkedList<>();
+
+	private DomainCounter domainCounter;
 	
+	public String appName = "undefinded";
 	public String proxyIdentifier;
-	
+	public int port;
+
 	public ManagedProxy(String identifier) throws SAXException, IOException, Exception {
 		proxyIdentifier = identifier;
 		
@@ -47,6 +53,8 @@ public class ManagedProxy implements PersistentConnectionListener{
 			randomPort = ThreadLocalRandom.current().nextInt(MIN_PORT_NUMBER, MAX_PORT_NUMBER + 1);
 		} while (!available(randomPort));
 		
+		
+		port = randomPort;
 		override.setProxyPort(randomPort);
 		override.setProxyHost("localhost");
 		
@@ -101,6 +109,10 @@ public class ManagedProxy implements PersistentConnectionListener{
 		analyzers.add(analyzer);
 	}
 	
+	public void addProxyRequestResponseAnalyzer(ProxyRequestResponseAnalyzer analyzer) {
+		requestResponseAnalyzers.add(analyzer);
+	}
+	
 	public void removeProxyPerparator(ProxyPreparator preparator) {
 		preparators.remove(preparator);
 	}
@@ -108,9 +120,33 @@ public class ManagedProxy implements PersistentConnectionListener{
 	public void removeProxyAnalyzer(ProxyJITAnalyzer analyzer) {
 		analyzers.remove(analyzer);
 	}
+	
+	public void removeProxyRequestResponseAnalyzer(ProxyRequestResponseAnalyzer analyzer) {
+		requestResponseAnalyzers.remove(analyzer);
+	}
+	
+	public int getSessionNo() {
+		return sessionNo;
+	}
+
+	public void setSessionNo(int sessionNo) {
+		this.sessionNo = sessionNo;
+	}
+
+	public DomainCounter getDomainCounter() {
+		return domainCounter;
+	}
+
+	public void setDomainCounter(DomainCounter domainCounter) {
+		this.domainCounter = domainCounter;
+	}
+	
+	public List<ProxyRequestResponseAnalyzer> getRequestResponseAnalyzers() {
+		return requestResponseAnalyzers;
+	}
 
 	//PersistentConnectionListener
-	
+
 	@Override
 	public int getArrangeableListenerOrder() {
 		return 0;

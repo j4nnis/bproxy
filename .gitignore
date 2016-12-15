@@ -10,3 +10,4 @@ out/
 /build/dist/
 /build/results/
 /bin/
+*.class

@@ -1,5 +1,28 @@
 package de.muething;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
+
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.log4j.Appender;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.moxy.json.MoxyJsonConfig;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Proxy;
 import org.parosproxy.paros.model.Model;
@@ -11,28 +34,13 @@ import org.zaproxy.zap.utils.ClassLoaderUtil;
 
 import de.muething.proxying.BProxyListener;
 
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
-import org.apache.log4j.Appender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Enumeration;
-import java.util.Locale;
-
 /**
  * Main class.
  *
  */
-public class Main {
+public class Main extends ResourceConfig {
 	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://localhost:8181/myapp/";
+	public static final String BASE_URI = "http://localhost:8181/api/";
 
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -44,11 +52,14 @@ public class Main {
 		// create a resource config that scans for JAX-RS resources and
 		// providers
 		// in de.muething package
-		final ResourceConfig rc = new ResourceConfig().packages("de.muething");
+		final ResourceConfig rc = new ResourceConfig().packages("de.muething").register(createMoxyJsonResolver());
 
 		// create and start a new instance of grizzly http server
 		// exposing the Jersey application at BASE_URI
-		return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+		HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc, true);
+		server.getListener("grizzly").getFileCache().setEnabled(false);
+
+		return server;
 	}
 
 	static {
@@ -69,6 +80,30 @@ public class Main {
 			Protocol.registerProtocol("https", new Protocol("https", (ProtocolSocketFactory) new SSLConnector(), 443));
 		}
 	}
+	
+	Main() {
+		packages("de.muething.models").register
+        (new JsonMoxyConfigurationContextResolver());
+	}
+	
+	
+	@Provider
+    final static class JsonMoxyConfigurationContextResolver 
+    implements ContextResolver<MoxyJsonConfig> {
+
+        @Override
+        public MoxyJsonConfig getContext(Class<?> objectType) {
+            final MoxyJsonConfig configuration = new MoxyJsonConfig();
+
+            Map<String, String> namespacePrefixMapper = new HashMap<String, String>(1);
+            namespacePrefixMapper.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+
+            configuration.setNamespacePrefixMapper(namespacePrefixMapper);
+            configuration.setNamespaceSeparator(':');
+
+            return configuration;
+        }
+    }
 
 	private static void initClassLoader() {
 		try {
@@ -104,6 +139,14 @@ public class Main {
 
 	static BProxyListener listener;
 	
+	 public static ContextResolver<MoxyJsonConfig> createMoxyJsonResolver() {
+	        final MoxyJsonConfig moxyJsonConfig = new MoxyJsonConfig();
+	        Map<String, String> namespacePrefixMapper = new HashMap<String, String>(1);
+	        namespacePrefixMapper.put("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+	        moxyJsonConfig.setNamespacePrefixMapper(namespacePrefixMapper).setNamespaceSeparator(':');
+	        return moxyJsonConfig.resolver();
+	    }
+	
 	/**
 	 * Main method.
 	 * 
@@ -117,6 +160,9 @@ public class Main {
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
 				BASE_URI));
 
+		CLStaticHttpHandler staticHttpHandler = new CLStaticHttpHandler(new URLClassLoader(new URL[] {new URL("file:///Users/jannis/Developer/BSc/bproxyui/")}));
+		server.getServerConfiguration().addHttpHandler(staticHttpHandler, "/");
+		
 		initClassLoader();
 
 		Model model = new Model();

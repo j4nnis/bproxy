@@ -28,10 +28,7 @@ public class BProxyListener implements ProxyListener, PersistentConnectionListen
 	}
 
 	@Override
-	public boolean onHttpRequestSend(HttpMessage msg) {
-
-
-		
+	public boolean onHttpRequestSend(HttpMessage msg) {		
 		return true;
 	}
 
