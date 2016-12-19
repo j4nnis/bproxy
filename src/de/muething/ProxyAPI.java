@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -17,7 +18,7 @@ import de.muething.proxying.ManagedProxy;
 import de.muething.proxying.ProxyManager;
 
 /**
- * Root resource (exposed at "myresource" path)
+ * Root resource (exposed at "proxy" path)
  */
 @Path("proxy")
 public class ProxyAPI {
@@ -52,14 +53,14 @@ public class ProxyAPI {
 
     @POST @Path("/{proxyIdentifier}/newSession")
     @Produces(MediaType.APPLICATION_JSON)
-    public ExternalProxyDescription startSessionForProxy(String proxyIdentifier) {
+    public ExternalProxyDescription startSessionForProxy(@PathParam("proxyIdentifier") String proxyIdentifier) {
 		ManagedProxy proxy = ProxyManager.INSTANCE.newSessionWithProxy(proxyIdentifier);
         return new ExternalProxyDescription(proxy);
     }
     
     @POST @Path("/{proxyIdentifier}/stop")
     @Produces(MediaType.APPLICATION_JSON)
-    public String stopProxy() {
+    public String stopProxy(@PathParam("proxyIdentifier") String proxyIdentifier) {
     	
 
         return "unimplemented";
@@ -67,7 +68,7 @@ public class ProxyAPI {
     
     @GET @Path("/{proxyIdentifier}/report")
     @Produces(MediaType.APPLICATION_JSON)
-    public Report getReport(String proxyIdentifier) {
+    public Report getReport(@PathParam("proxyIdentifier") String proxyIdentifier) {
         return ReportGenerator.getReportFor(proxyIdentifier);
     }
 }

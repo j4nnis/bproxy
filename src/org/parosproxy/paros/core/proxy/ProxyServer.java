@@ -53,6 +53,8 @@ import org.apache.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpUtil;
+import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
+import org.parosproxy.paros.security.SslCertificateService;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 
@@ -75,8 +77,19 @@ public class ProxyServer implements Runnable {
     protected Vector<CacheProcessingItem> cacheProcessingList = new Vector<>();
     private List<Pattern> excludeUrls = null;
     private static Logger log = Logger.getLogger(ProxyServer.class);
+    
+    
+    private SslCertificateService certService = CachedSslCertifificateServiceImpl.getService();
+    
+    public SslCertificateService getCertService() {
+		return certService;
+	}
 
-    /**
+	public void setCertService(SslCertificateService certService) {
+		this.certService = certService;
+	}
+
+	/**
      * @return Returns the enableCacheProcessing.
      */
     public boolean isEnableCacheProcessing() {
@@ -270,7 +283,7 @@ public class ProxyServer implements Runnable {
     }
 
     protected ProxyThread createProxyProcess(Socket clientSocket) {
-        ProxyThread process = new ProxyThread(this, clientSocket);
+        ProxyThread process = new ProxyThread(this, clientSocket, certService);
         return process;
     }
 

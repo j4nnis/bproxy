@@ -97,6 +97,8 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpUtil;
 import org.parosproxy.paros.security.MissingRootCertificateException;
+import org.parosproxy.paros.security.SslCertificateService;
+import org.parosproxy.paros.security.SslCertificateServiceImpl;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.api.API;
@@ -137,6 +139,23 @@ class ProxyThread implements Runnable {
     
     private static Vector<Thread> proxyThreadList = new Vector<>();
     
+    //BProxy ability to use different SSL
+    private SslCertificateService certService = SslCertificateServiceImpl.getService();
+    
+	public SslCertificateService getCertService() {
+		return certService;
+	}
+
+	public void setCertService(SslCertificateService certService) {
+		this.certService = certService;
+	}
+
+	ProxyThread(ProxyServer server, Socket socket, SslCertificateService service) {
+		this(server, socket);
+		
+		certService = service;
+	}
+	
 	ProxyThread(ProxyServer server, Socket socket) {
 		parentServer = server;
 		proxyParam = parentServer.getProxyParam();
@@ -169,7 +188,7 @@ class ProxyThread implements Runnable {
 	private void beginSSL(String targethost) throws IOException {
 		// ZAP: added parameter 'targethost'
         try {
-			inSocket = HttpSender.getSSLConnector().createTunnelServerSocket(targethost, inSocket);
+			inSocket = HttpSender.getSSLConnector().createTunnelServerSocket(targethost, inSocket, getCertService());
         } catch (MissingRootCertificateException e) {
         	throw new MissingRootCertificateException(e); // throw again, cause will be catched later.
 		} catch (Exception e) {

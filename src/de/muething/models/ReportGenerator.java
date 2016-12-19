@@ -1,6 +1,7 @@
 package de.muething.models;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import de.muething.interfaces.ProxyRequestResponseAnalyzer;
 import de.muething.models.Report.Row;
@@ -12,6 +13,10 @@ public class ReportGenerator {
 	public static Report getReportFor(String proxyIdentifier) {
 	
 		ManagedProxy proxy = ProxyManager.INSTANCE.getManagedProxy(proxyIdentifier);
+		if (proxy == null) {
+			return null;
+		}
+		
 		Report report = new Report();
 		
 		report.name = proxy.appName;
@@ -28,12 +33,14 @@ public class ReportGenerator {
 		ArrayList<Row> rows = new ArrayList<>();
 		
 		
-		String domain;
-		while ((domain = proxy.getDomainCounter().getDomains().next()) != null) {
+		Iterator<String> iterator = proxy.getDomainCounter().getDomains();
+		
+		while (iterator.hasNext()) {
+			String domain = iterator.next();
 			ArrayList<ReportRecord> row = new ArrayList<ReportRecord>();
 			
 			for (ProxyRequestResponseAnalyzer analyzer : proxy.getRequestResponseAnalyzers()) {
-				legend.addAll(analyzer.createReportReportRowFor(proxy, domain));
+				row.addAll(analyzer.createReportReportRowFor(proxy, domain));
 			}
 			
 			rows.add(new Row(row));

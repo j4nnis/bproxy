@@ -25,11 +25,10 @@ import org.glassfish.jersey.moxy.json.MoxyJsonConfig;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Proxy;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.SSLConnector;
 import org.xml.sax.SAXException;
-import org.zaproxy.zap.control.ControlOverrides;
 import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
+import org.zaproxy.zap.extension.dynssl.SslCertificateUtils;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
 
 import de.muething.proxying.BProxyListener;
@@ -40,7 +39,7 @@ import de.muething.proxying.BProxyListener;
  */
 public class Main extends ResourceConfig {
 	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://localhost:8181/api/";
+	public static final String BASE_URI = "http://jane.local:8181/api/";
 
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -155,6 +154,11 @@ public class Main extends ResourceConfig {
 	 * @throws SAXException 
 	 */
 	public static void main(String[] args) throws SAXException, Exception {
+		
+
+		
+		
+		
 		final HttpServer server = startServer();
 		System.out.println(String.format(
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
@@ -165,23 +169,25 @@ public class Main extends ResourceConfig {
 		
 		initClassLoader();
 
-		Model model = new Model();
-		ControlOverrides override = new ControlOverrides();
-		override.setProxyPort(30325);
-		override.setProxyHost("localhost");
-		
-		model.init(override);
+//		Model model = new Model();
+//		ControlOverrides override = new ControlOverrides();
+//		override.setProxyPort(30325);
+//		override.setProxyHost("localhost");
+//		
+//		model.init(override);
 
 		ExtensionDynSSL ssl =  new ExtensionDynSSL();
-		ssl.createNewRootCa();
+		
+		URL url = Main.class.getResource("root_ca.pem");
+		ssl.setRootCa(SslCertificateUtils.pem2Keystore(new File(url.toURI())));
 		
 	
-		proxy = new Proxy(model, override);
-		listener = new BProxyListener("test", 0);
-		proxy.addProxyListener(listener);
-		proxy.addPersistentConnectionListener(listener);
-		
-		proxy.startServer();
+//		proxy = new Proxy(model, override);
+//		listener = new BProxyListener("test", 0);
+//		proxy.addProxyListener(listener);
+//		proxy.addPersistentConnectionListener(listener);
+//		
+//		proxy.startServer();
 		System.in.read();
 		server.stop();
 	}

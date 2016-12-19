@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.net.ssl.SSLSocket;
+
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
@@ -40,6 +42,8 @@ public class PersistedRequest {
 	private String resonseBody;
 	
 	private String requestURL;
+	
+	private String hostName;
 
 	private String tlsVersion;
 
@@ -56,6 +60,12 @@ public class PersistedRequest {
 		this.requestBody = message.getRequestBody().toString();
 		this.resonseBody = message.getResponseBody().toString();
 		
+		this.requestURL = message.getRequestHeader().getURI().toString();
+		this.hostName = message.getRequestHeader().getHostName();
+		
+		if (inSocket instanceof SSLSocket) {
+			this.tlsVersion = ((SSLSocket)inSocket).getSession().getProtocol();
+		}
 	}
 	
 	public Date getTimestamp() {
@@ -121,6 +131,14 @@ public class PersistedRequest {
 
 	public void setResonseBody(String resonseBody) {
 		this.resonseBody = resonseBody;
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
 	}
 
 	// convenience methods

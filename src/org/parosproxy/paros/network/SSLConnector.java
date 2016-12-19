@@ -502,9 +502,9 @@ public class SSLConnector implements SecureProtocolSocketFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public Socket createTunnelServerSocket(String targethost, Socket socket) throws IOException {
+	public Socket createTunnelServerSocket(String targethost, Socket socket, SslCertificateService certificateService) throws IOException {
 		// ZAP: added host name parameter
-		SSLSocket s = (SSLSocket) getTunnelSSLSocketFactory(targethost).createSocket(socket, socket
+		SSLSocket s = (SSLSocket) getTunnelSSLSocketFactory(targethost, certificateService).createSocket(socket, socket
 				.getInetAddress().getHostAddress(), socket.getPort(), true);
 		
 		s.setUseClientMode(false);
@@ -513,7 +513,7 @@ public class SSLConnector implements SecureProtocolSocketFactory {
 	}
 
 	// ZAP: added new ServerSocketFaktory with support of dynamic SSL certificates
-	public SSLSocketFactory getTunnelSSLSocketFactory(String hostname) {
+	public SSLSocketFactory getTunnelSSLSocketFactory(String hostname, SslCertificateService certService) {
 
 		//	SSLServerSocketFactory ssf = null;
 		// set up key manager to do server authentication
@@ -524,7 +524,7 @@ public class SSLConnector implements SecureProtocolSocketFactory {
 			// Normally "SunX509", "IbmX509"...
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 
-			SslCertificateService scs = CachedSslCertifificateServiceImpl.getService();
+			SslCertificateService scs = certService;
 			KeyStore ks = scs.createCertForHost(hostname);
 
 			kmf.init(ks, SslCertificateService.PASSPHRASE);

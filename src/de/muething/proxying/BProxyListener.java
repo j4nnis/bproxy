@@ -34,7 +34,6 @@ public class BProxyListener implements ProxyListener, PersistentConnectionListen
 
 	@Override
 	public boolean onHttpResponseReceive(HttpMessage msg) {
-
 		System.out.println(msg.toString());
 		
 		return true;

@@ -39,6 +39,7 @@ import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.core.proxy.ProxyServerSSL;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.control.ControlOverrides;
 
@@ -112,6 +113,11 @@ public class Proxy {
 		    
 		}
 		return true;
+	}
+	
+	public void setCertificateService (SslCertificateService certService){
+		if (proxyServer != null) proxyServer.setCertService(certService);
+		if (proxyServerSSL != null) proxyServerSSL.setCertService(certService);
 	}
 
 	public void stopServer() {

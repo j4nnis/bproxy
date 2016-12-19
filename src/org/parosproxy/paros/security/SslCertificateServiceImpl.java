@@ -72,7 +72,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * @see org.bouncycastle.x509.examples.AttrCertExample how to manage CAs and stuff
  * @see CachedSslCertifificateServiceImpl for a cached SslCertificateService
  */
-public final class SslCertificateServiceImpl implements SslCertificateService {
+public class SslCertificateServiceImpl implements SslCertificateService {
 
 	private X509Certificate caCert = null;
 	private PublicKey caPubKey = null;
@@ -82,7 +82,7 @@ public final class SslCertificateServiceImpl implements SslCertificateService {
 
 	private static final SslCertificateService singleton = new SslCertificateServiceImpl();
 
-	private SslCertificateServiceImpl() {
+	public SslCertificateServiceImpl() {
 		Security.addProvider(new BouncyCastleProvider());
 		final Random rnd = new Random();
 		rnd.setSeed(System.currentTimeMillis());
@@ -125,10 +125,10 @@ public final class SslCertificateServiceImpl implements SslCertificateService {
 
 		X500NameBuilder namebld = new X500NameBuilder(BCStyle.INSTANCE); 
 		namebld.addRDN(BCStyle.CN, hostname);
-		namebld.addRDN(BCStyle.OU, "Zed Attack Proxy Project");
-		namebld.addRDN(BCStyle.O, "OWASP");
+		namebld.addRDN(BCStyle.OU, "Benevolent Proxy");
+		namebld.addRDN(BCStyle.O, "Dortmund Univerity of Applied Technology and Arts");
 		namebld.addRDN(BCStyle.C, "xx");
-		namebld.addRDN(BCStyle.EmailAddress, "owasp-zed-attack-proxy@lists.owasp.org");
+		namebld.addRDN(BCStyle.EmailAddress, "jannis.muething004@stud.fh-dortmund.de");
 
 		X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder (
 				new X509CertificateHolder(caCert.getEncoded()).getSubject(),

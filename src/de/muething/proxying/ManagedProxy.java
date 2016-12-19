@@ -16,7 +16,6 @@ import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.control.ControlOverrides;
 
-import de.muething.DatabaseDriver;
 import de.muething.interfaces.ProxyJITAnalyzer;
 import de.muething.interfaces.ProxyPreparator;
 import de.muething.interfaces.ProxyRequestResponseAnalyzer;
@@ -56,11 +55,13 @@ public class ManagedProxy implements PersistentConnectionListener{
 		
 		port = randomPort;
 		override.setProxyPort(randomPort);
-		override.setProxyHost("localhost");
+		override.setProxyHost("jane.local");
 		
 		model.init(override);
 		
 		proxy = new Proxy(model, override);
+		proxy.addPersistentConnectionListener(this);
+		proxy.startServer();
 	}
 	
 	public void startSession() {
@@ -160,7 +161,7 @@ public class ManagedProxy implements PersistentConnectionListener{
 			request = jitAnalyzer.willPersistRequest(request, httpMessage, inSocket, method);
 		}
 		
-		DatabaseDriver.INSTANCE.getDatastore().save(request);
+		//DatabaseDriver.INSTANCE.getDatastore().save(request);
 		return false;
 	}
 	

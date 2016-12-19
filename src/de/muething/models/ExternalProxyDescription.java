@@ -6,7 +6,7 @@ public class ExternalProxyDescription {
 	public String domain = "jane.local";
 	public int port;
 	public String appName;
-	public int sessionNo;
+	public int session;
 	public String proxyID;
 	public String state = "running";
 	public String caCertDownloadLink = "/root_ca.cer";
@@ -16,7 +16,7 @@ public class ExternalProxyDescription {
 	public ExternalProxyDescription(ManagedProxy proxy) {
 		port = proxy.port;
 		appName = proxy.appName;
-		sessionNo = proxy.getSessionNo();
+		session = proxy.getSessionNo();
 		proxyID = proxy.proxyIdentifier;
 	}
 
@@ -44,12 +44,12 @@ public class ExternalProxyDescription {
 		this.appName = appName;
 	}
 
-	public int getSessionNo() {
-		return sessionNo;
+	public int getSession() {
+		return session;
 	}
 
-	public void setSessionNo(int sessionNo) {
-		this.sessionNo = sessionNo;
+	public void setSession(int sessionNo) {
+		this.session = sessionNo;
 	}
 
 	public String getProxyID() {
