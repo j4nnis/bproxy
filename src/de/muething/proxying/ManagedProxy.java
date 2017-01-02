@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.parosproxy.paros.control.Proxy;
+import org.parosproxy.paros.core.proxy.ConnectRequestProxyListener;
+import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.xml.sax.SAXException;
@@ -16,15 +18,15 @@ import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.control.ControlOverrides;
 
+import de.muething.interfaces.HandshakeListener;
 import de.muething.interfaces.ProxyJITAnalyzer;
 import de.muething.interfaces.ProxyPreparator;
 import de.muething.interfaces.ProxyRequestResponseAnalyzer;
 import de.muething.models.PersistedRequest;
 import de.muething.modules.DomainCounter;
 
-public class ManagedProxy implements PersistentConnectionListener{
+public class ManagedProxy implements PersistentConnectionListener, HandshakeListener{
 	public static final int MIN_PORT_NUMBER = 1100;
-
 	public static final int MAX_PORT_NUMBER = 49151;
 	
 	public Proxy proxy;
@@ -32,6 +34,8 @@ public class ManagedProxy implements PersistentConnectionListener{
 	int sessionNo = -1;
 	
 	private List<ProxyJITAnalyzer> analyzers = new LinkedList<ProxyJITAnalyzer>();
+	private List<HandshakeListener> handshakeListeners = new LinkedList<HandshakeListener>();
+
 	private List<ProxyPreparator> preparators = new LinkedList<ProxyPreparator>();
 	private List<ProxyRequestResponseAnalyzer> requestResponseAnalyzers = new LinkedList<>();
 
@@ -61,6 +65,8 @@ public class ManagedProxy implements PersistentConnectionListener{
 		
 		proxy = new Proxy(model, override);
 		proxy.addPersistentConnectionListener(this);
+		proxy.addHandshakeListener(this);
+		
 		proxy.startServer();
 	}
 	
@@ -126,6 +132,14 @@ public class ManagedProxy implements PersistentConnectionListener{
 		requestResponseAnalyzers.remove(analyzer);
 	}
 	
+	public void addHandshakeListener(HandshakeListener handshakeListener) {
+		handshakeListeners.add(handshakeListener);
+	}
+	
+	public void removeHandshakeListener(HandshakeListener handshakeListener) {
+		handshakeListeners.remove(handshakeListener);
+	}
+	
 	public int getSessionNo() {
 		return sessionNo;
 	}
@@ -152,6 +166,9 @@ public class ManagedProxy implements PersistentConnectionListener{
 	public int getArrangeableListenerOrder() {
 		return 0;
 	}
+	
+	
+	
 
 	@Override
 	public boolean onHandshakeResponse(HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
@@ -163,6 +180,13 @@ public class ManagedProxy implements PersistentConnectionListener{
 		
 		//DatabaseDriver.INSTANCE.getDatastore().save(request);
 		return false;
+	}
+
+	@Override
+	public void handshake(String domain, boolean success, String info) {
+		for (HandshakeListener handshakeListener : handshakeListeners) {
+			handshakeListener.handshake(domain, success, info);
+		}
 	}
 	
 }

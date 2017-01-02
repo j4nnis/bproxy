@@ -45,7 +45,7 @@ public class StaticHostNameCertficateService extends SslCertificateServiceImpl {
 	}
 	
 	
-	public SslCertificateService getCachedService() {
+	public static SslCertificateService getCachedService() {
 		return cached;
 	}
 	

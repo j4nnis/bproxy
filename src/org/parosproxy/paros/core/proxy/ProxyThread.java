@@ -65,8 +65,8 @@
 package org.parosproxy.paros.core.proxy;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -103,6 +103,8 @@ import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.network.HttpRequestBody;
+
+import de.muething.interfaces.HandshakeListener;
 
 
 class ProxyThread implements Runnable {
@@ -189,12 +191,19 @@ class ProxyThread implements Runnable {
 		// ZAP: added parameter 'targethost'
         try {
 			inSocket = HttpSender.getSSLConnector().createTunnelServerSocket(targethost, inSocket, getCertService());
+			
+			
+			
         } catch (MissingRootCertificateException e) {
         	throw new MissingRootCertificateException(e); // throw again, cause will be catched later.
 		} catch (Exception e) {
+			notifyHandshakeListeners(targethost, false, e.getMessage());
+			
 			// ZAP: transform for further processing 
 			throw new IOException("Error while establishing SSL connection for '" + targethost + "'!", e);
 		}
+        
+		notifyHandshakeListeners(targethost, true, "handshake succeeded");
         
         httpIn = new HttpInputStream(inSocket);
         httpOut = new HttpOutputStream(inSocket.getOutputStream());
@@ -349,6 +358,8 @@ class ProxyThread implements Runnable {
 	
 	protected void processHttp(HttpRequestHeader requestHeader, boolean isSecure) throws IOException {
 
+		
+		
 		HttpRequestBody reqBody = null; // ZAP: Replaced the class HttpBody with the class HttpRequestBody.
 		boolean isFirstRequest = true;
 		HttpMessage msg = null;
@@ -616,6 +627,16 @@ class ProxyThread implements Runnable {
 		}
 		return true;
 	}
+	
+
+	
+	private void notifyHandshakeListeners(String domain, boolean success, String info ) {
+		for (HandshakeListener hl : parentServer.getHandshakeListener()) {
+			hl.handshake(domain, success, info);
+		}
+	}
+	
+	
 	
     private boolean notifyOverrideListenersRequestSend(HttpMessage httpMessage) {
         for (OverrideMessageProxyListener listener : parentServer.getOverrideMessageProxyListeners()) {

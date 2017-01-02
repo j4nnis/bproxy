@@ -11,6 +11,6 @@ import de.muething.models.PersistedRequest;
  * This interface gives the implementing class an opportunity to look at every request goiing through the proxy without having to perform any database queries. 
  */
 
-public interface ProxyJITAnalyzer {
+public interface ProxyJITAnalyzer{
 	PersistedRequest willPersistRequest(PersistedRequest request, HttpMessage httpMessage, Socket inSocket, ZapGetMethod method);
 }

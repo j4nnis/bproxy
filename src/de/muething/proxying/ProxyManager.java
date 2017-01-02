@@ -10,6 +10,7 @@ import de.muething.modules.DomainCounter;
 import de.muething.modules.HeaderAnalyzer;
 import de.muething.modules.IPGeoLocationAnalyzer;
 import de.muething.modules.SSLAnalyzer;
+import de.muething.modules.SSLCertificateTestDriverAndAnalyzer;
 
 public class ProxyManager {
 	public static final ProxyManager INSTANCE = new ProxyManager();
@@ -31,7 +32,8 @@ public class ProxyManager {
 		SSLAnalyzer sslAnalyzer = new SSLAnalyzer();
 		HeaderAnalyzer headerAnalyzer = new HeaderAnalyzer();
 		IPGeoLocationAnalyzer ipAnalyzer = new IPGeoLocationAnalyzer();
-		
+		SSLCertificateTestDriverAndAnalyzer sslTestDriver = new SSLCertificateTestDriverAndAnalyzer();
+
 		mProxy.addProxyAnalyzer(dCounter);
 		mProxy.addProxyRequestResponseAnalyzer(dCounter);
 		
@@ -43,6 +45,10 @@ public class ProxyManager {
 		
 		mProxy.addProxyAnalyzer(ipAnalyzer);
 		mProxy.addProxyRequestResponseAnalyzer(ipAnalyzer);
+		
+		mProxy.addHandshakeListener(sslTestDriver);
+		mProxy.addProxyRequestResponseAnalyzer(sslTestDriver);
+		mProxy.addProxyPerparator(sslTestDriver);
 		
 		mProxy.setDomainCounter(dCounter);
 		

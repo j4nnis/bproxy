@@ -52,7 +52,7 @@ public class DynamicHostNameUntrustedCertificateService extends SslCertificateSe
 		
 	}
 
-	public SslCertificateService getCachedService() {
+	public static SslCertificateService getCachedService() {
 		return cached;
 	}
 	

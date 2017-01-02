@@ -12,7 +12,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import org.parosproxy.paros.security.SslCertificateService;
-import org.zaproxy.zap.extension.dynssl.SslCertificateUtils;
 
 /*
  * Serves a certificate self signed certificate for a static domain (not for the requested).
@@ -34,7 +33,7 @@ public class StaticHostNameUntrustedCertificateService extends DynamicHostNameUn
 		cached = new CachedCertificateServiceWrapper(service);
 	}
 
-	public SslCertificateService getCachedService() {
+	public static SslCertificateService getCachedService() {
 		return cached;
 	}
 

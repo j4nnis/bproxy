@@ -24,7 +24,7 @@ public class DynamicHostNameSignedByUntrustedCertificateService extends SslCerti
 		cached = new CachedCertificateServiceWrapper(service);
 	}
 
-	public SslCertificateService getCachedService() {
+	public static SslCertificateService getCachedService() {
 		return cached;
 	}
 

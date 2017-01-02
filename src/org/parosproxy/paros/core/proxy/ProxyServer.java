@@ -58,6 +58,8 @@ import org.parosproxy.paros.security.SslCertificateService;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
 
+import de.muething.interfaces.HandshakeListener;
+
 public class ProxyServer implements Runnable {
 
     protected Thread thread = null;
@@ -69,6 +71,10 @@ public class ProxyServer implements Runnable {
     protected Vector<ProxyListener> listenerList = new Vector<>();
     protected Vector<OverrideMessageProxyListener> overrideListeners = new Vector<>();
     protected Vector<PersistentConnectionListener> persistentConnectionListenerList = new Vector<>();
+    
+    //BProxy: Added handshakeListenerList
+    protected Vector<HandshakeListener> handshakeListenerList = new Vector<>();
+    
     private final List<ConnectRequestProxyListener> connectRequestProxyListeners;
     // ZAP: Added listenersComparator.
     private static Comparator<ArrangeableProxyListener> listenersComparator;
@@ -329,6 +335,19 @@ public class ProxyServer implements Runnable {
     List<OverrideMessageProxyListener> getOverrideMessageProxyListeners() {
         return overrideListeners;
     }
+    
+    public void addHandshakeListener(HandshakeListener listener) {
+        handshakeListenerList.add(listener);
+    }
+
+    public void removeHandshakeListener(HandshakeListener listener) {
+    	handshakeListenerList.remove(listener);
+    }
+
+    synchronized List<HandshakeListener> getHandshakeListener() {
+        return handshakeListenerList;
+    }
+    
 
     /**
      * Adds the given {@code listener}, that will be notified of the received CONNECT requests.

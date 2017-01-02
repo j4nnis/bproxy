@@ -43,6 +43,8 @@ import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.control.ControlOverrides;
 
+import de.muething.interfaces.HandshakeListener;
+
 public class Proxy {
     
 	private Model model = null;
@@ -165,6 +167,17 @@ public class Proxy {
 	    proxyServerSSL.removePersistentConnectionListener(listener);
 	}
 
+	
+	public void addHandshakeListener(HandshakeListener listener) {
+	    proxyServer.addHandshakeListener(listener);
+	    proxyServerSSL.addHandshakeListener(listener);
+	}
+
+	public void removeHandshakeListener(HandshakeListener listener) {
+	    proxyServer.removeHandshakeListener(listener);
+	    proxyServerSSL.removeHandshakeListener(listener);
+	}
+	
     /**
      * Adds the given {@code listener}, that will be notified of the received CONNECT requests.
      *
