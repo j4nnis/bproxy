@@ -12,20 +12,24 @@ import javax.ws.rs.client.WebTarget;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZapGetMethod;
 
+import de.muething.interfaces.HandshakeListener;
 import de.muething.interfaces.ProxyJITAnalyzer;
 import de.muething.interfaces.ProxyRequestResponseAnalyzer;
 import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.proxying.ManagedProxy;
 
-public class IPGeoLocationAnalyzer extends ProxyRequestResponseAnalyzer implements ProxyJITAnalyzer{
+public class IPGeoLocationAnalyzer extends ProxyRequestResponseAnalyzer implements ProxyJITAnalyzer, HandshakeListener{
 
 	private static Client client = ClientBuilder.newClient();
 	private static WebTarget target = client.target("http://ip-api.com/json/");
 
 	
 	private HashMap<String, String> domainToNation = new HashMap<>();
+
 	
+	private static String identifier = "ipGeoLocationAnalyzer";
+
 	@Override
 	public PersistedRequest willPersistRequest(PersistedRequest request, HttpMessage httpMessage, Socket inSocket,
 			ZapGetMethod method) {
@@ -57,6 +61,27 @@ public class IPGeoLocationAnalyzer extends ProxyRequestResponseAnalyzer implemen
 	@Override
 	public List<ReportRecord> getTitlesRowForResults() {
 		return titlesRow;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return identifier;
+	}
+	
+	@Override
+	public Integer getOrderNumberForOutput() {
+		return 3;
+	}
+	
+	@Override
+	public void handshake(String domain, boolean success, String info) {
+		if (domainToNation.get(domain) == null) {
+			GeoLocationServiceResponse response = target.path("{domain}")
+        			.resolveTemplate("domain", domain)
+                    .request()
+                    .get(GeoLocationServiceResponse.class);
+			domainToNation.put(domain, response.toString());
+		}		
 	}
 
 }

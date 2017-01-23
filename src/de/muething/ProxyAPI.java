@@ -1,6 +1,7 @@
 package de.muething;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import org.xml.sax.SAXException;
 
 import de.muething.models.ExternalProxyDescription;
+import de.muething.models.PersistedRequest;
 import de.muething.models.Report;
 import de.muething.models.ReportGenerator;
 import de.muething.proxying.ManagedProxy;
@@ -70,5 +72,11 @@ public class ProxyAPI {
     @Produces(MediaType.APPLICATION_JSON)
     public Report getReport(@PathParam("proxyIdentifier") String proxyIdentifier) {
         return ReportGenerator.getReportFor(proxyIdentifier);
+    }
+    
+    @GET @Path("/{proxyIdentifier}/report/proof/{domain}/{aId}/{column}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<PersistedRequest> getProof(@PathParam("proxyIdentifier") String proxyIdentifier, @PathParam("domain") String domain, @PathParam("aId") String aId, @PathParam("column") int column) {
+        return ReportGenerator.getProofFor(proxyIdentifier, domain, aId, column);
     }
 }

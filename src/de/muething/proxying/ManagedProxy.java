@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.parosproxy.paros.control.Proxy;
-import org.parosproxy.paros.core.proxy.ConnectRequestProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.xml.sax.SAXException;
@@ -18,6 +17,7 @@ import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.control.ControlOverrides;
 
+import de.muething.DatabaseDriver;
 import de.muething.interfaces.HandshakeListener;
 import de.muething.interfaces.ProxyJITAnalyzer;
 import de.muething.interfaces.ProxyPreparator;
@@ -37,7 +37,7 @@ public class ManagedProxy implements PersistentConnectionListener, HandshakeList
 	private List<HandshakeListener> handshakeListeners = new LinkedList<HandshakeListener>();
 
 	private List<ProxyPreparator> preparators = new LinkedList<ProxyPreparator>();
-	private List<ProxyRequestResponseAnalyzer> requestResponseAnalyzers = new LinkedList<>();
+	private HashMap<String, ProxyRequestResponseAnalyzer> requestResponseAnalyzers = new HashMap<>();
 
 	private DomainCounter domainCounter;
 	
@@ -108,6 +108,24 @@ public class ManagedProxy implements PersistentConnectionListener, HandshakeList
 	    return false;
 	}
 	
+	public void add (Object observer) {
+		if (observer instanceof ProxyPreparator) {
+			addProxyPerparator((ProxyPreparator) observer);
+		}
+		
+		if (observer instanceof ProxyJITAnalyzer) {
+			addProxyAnalyzer((ProxyJITAnalyzer) observer);
+		}
+		
+		if (observer instanceof ProxyRequestResponseAnalyzer) {
+			addProxyRequestResponseAnalyzer((ProxyRequestResponseAnalyzer) observer);
+		}
+		
+		if (observer instanceof HandshakeListener) {
+			addHandshakeListener((HandshakeListener) observer);
+		}
+	}
+	
 	public void addProxyPerparator(ProxyPreparator preparator) {
 		preparators.add(preparator);
 	}
@@ -117,7 +135,7 @@ public class ManagedProxy implements PersistentConnectionListener, HandshakeList
 	}
 	
 	public void addProxyRequestResponseAnalyzer(ProxyRequestResponseAnalyzer analyzer) {
-		requestResponseAnalyzers.add(analyzer);
+		requestResponseAnalyzers.put(analyzer.getIdentifier(), analyzer);
 	}
 	
 	public void removeProxyPerparator(ProxyPreparator preparator) {
@@ -129,7 +147,7 @@ public class ManagedProxy implements PersistentConnectionListener, HandshakeList
 	}
 	
 	public void removeProxyRequestResponseAnalyzer(ProxyRequestResponseAnalyzer analyzer) {
-		requestResponseAnalyzers.remove(analyzer);
+		requestResponseAnalyzers.remove(analyzer.getIdentifier());
 	}
 	
 	public void addHandshakeListener(HandshakeListener handshakeListener) {
@@ -156,8 +174,12 @@ public class ManagedProxy implements PersistentConnectionListener, HandshakeList
 		this.domainCounter = domainCounter;
 	}
 	
-	public List<ProxyRequestResponseAnalyzer> getRequestResponseAnalyzers() {
+	public HashMap<String, ProxyRequestResponseAnalyzer> getRequestResponseAnalyzers() {
 		return requestResponseAnalyzers;
+	}
+	
+	public ProxyRequestResponseAnalyzer getAnalyzerForIdentifier(String identifier) {
+		return requestResponseAnalyzers.get(identifier);
 	}
 
 	//PersistentConnectionListener
@@ -178,7 +200,7 @@ public class ManagedProxy implements PersistentConnectionListener, HandshakeList
 			request = jitAnalyzer.willPersistRequest(request, httpMessage, inSocket, method);
 		}
 		
-		//DatabaseDriver.INSTANCE.getDatastore().save(request);
+		DatabaseDriver.INSTANCE.getDatastore().save(request);
 		return false;
 	}
 

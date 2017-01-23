@@ -11,11 +11,10 @@ import de.muething.modules.HeaderAnalyzer;
 import de.muething.modules.IPGeoLocationAnalyzer;
 import de.muething.modules.SSLAnalyzer;
 import de.muething.modules.SSLCertificateTestDriverAndAnalyzer;
+import de.muething.modules.UsernamePasswordDetector;
 
 public class ProxyManager {
-	public static final ProxyManager INSTANCE = new ProxyManager();
-
-	
+	public static final ProxyManager INSTANCE = new ProxyManager();	
 	private HashMap<String, ManagedProxy> proxies = new HashMap<>();
 
 	public synchronized ManagedProxy getNewManagedProxy() throws SAXException, IOException, Exception {
@@ -33,22 +32,31 @@ public class ProxyManager {
 		HeaderAnalyzer headerAnalyzer = new HeaderAnalyzer();
 		IPGeoLocationAnalyzer ipAnalyzer = new IPGeoLocationAnalyzer();
 		SSLCertificateTestDriverAndAnalyzer sslTestDriver = new SSLCertificateTestDriverAndAnalyzer();
+		UsernamePasswordDetector usernamePasswordD = new UsernamePasswordDetector();
 
-		mProxy.addProxyAnalyzer(dCounter);
-		mProxy.addProxyRequestResponseAnalyzer(dCounter);
-		
-		mProxy.addProxyAnalyzer(sslAnalyzer);
-		mProxy.addProxyRequestResponseAnalyzer(sslAnalyzer);
-		
-		mProxy.addProxyAnalyzer(headerAnalyzer);
-		mProxy.addProxyRequestResponseAnalyzer(headerAnalyzer);
-		
-		mProxy.addProxyAnalyzer(ipAnalyzer);
-		mProxy.addProxyRequestResponseAnalyzer(ipAnalyzer);
-		
-		mProxy.addHandshakeListener(sslTestDriver);
-		mProxy.addProxyRequestResponseAnalyzer(sslTestDriver);
-		mProxy.addProxyPerparator(sslTestDriver);
+		mProxy.add(dCounter);
+		mProxy.add(sslAnalyzer);
+		mProxy.add(headerAnalyzer);
+		mProxy.add(ipAnalyzer);
+		mProxy.add(sslTestDriver);
+		mProxy.add(usernamePasswordD);
+
+//		mProxy.addProxyAnalyzer(dCounter);
+//		mProxy.addProxyRequestResponseAnalyzer(dCounter);
+//		
+//		mProxy.addProxyAnalyzer(sslAnalyzer);
+//		mProxy.addProxyRequestResponseAnalyzer(sslAnalyzer);
+//		mProxy.addProxyPerparator(sslAnalyzer);
+//		
+//		mProxy.addProxyAnalyzer(headerAnalyzer);
+//		mProxy.addProxyRequestResponseAnalyzer(headerAnalyzer);
+//		
+//		mProxy.addProxyAnalyzer(ipAnalyzer);
+//		mProxy.addProxyRequestResponseAnalyzer(ipAnalyzer);
+//		
+//		mProxy.addHandshakeListener(sslTestDriver);
+//		mProxy.addProxyRequestResponseAnalyzer(sslTestDriver);
+//		mProxy.addProxyPerparator(sslTestDriver);
 		
 		mProxy.setDomainCounter(dCounter);
 		

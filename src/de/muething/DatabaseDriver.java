@@ -18,7 +18,7 @@ public class DatabaseDriver {
 		morphia.mapPackage("de.muething.models");
 
 		// create the Datastore connecting to the default port on the local host
-		datastore = morphia.createDatastore(new MongoClient(), "bproxy");
+		datastore = morphia.createDatastore(new MongoClient("localhost"), "bproxy");
 		datastore.ensureIndexes();
 	}
 

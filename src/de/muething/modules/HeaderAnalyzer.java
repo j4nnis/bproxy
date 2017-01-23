@@ -19,6 +19,8 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 
 	private HashMap<String, CredentialExchangeCharacteristics> domainToUnprotectedCookieLeakage = new HashMap<>();
 	private HashMap<String, CredentialExchangeCharacteristics> domainToUnprotectedAuthorizationLeakage = new HashMap<>();
+
+	private static String identifier = "headerAnalyzer";
 	
 	@Override
 	public PersistedRequest willPersistRequest(PersistedRequest request, HttpMessage httpMessage, Socket inSocket,
@@ -34,6 +36,8 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 	
 		Vector<String> cookies = httpMessage.getRequestHeader().getHeaders("Cookie");
 		if (cookies != null && !cookies.isEmpty()) {
+			tag(request, 0);
+
 			if (connectionProtected) {
 				characteristics.setFirstEncryptedExchangeURLDescrString(urlDescrString(request.getRequestURL(), "Cookie", cookies));
 			} else {
@@ -43,6 +47,8 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 		
 		cookies = httpMessage.getResponseHeader().getHeaders("Set-Cookie");
 		if (cookies != null && !cookies.isEmpty()) {
+			tag(request, 0);
+
 			if (connectionProtected) {
 				characteristics.setFirstEncryptedExchangeURLDescrString(urlDescrString(request.getRequestURL(), "Set-Cookie", cookies));
 			} else {
@@ -58,6 +64,9 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 		
 		Vector<String> authorization = httpMessage.getRequestHeader().getHeaders("Authorization");
 		if (authorization != null && !authorization.isEmpty()) {
+			
+			tag(request, 1);
+
 			if (connectionProtected) {
 				characteristics.setFirstEncryptedExchangeURLDescrString(urlDescrString(request.getRequestURL(), "Authorization", authorization));
 			} else {
@@ -66,7 +75,8 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 				
 				String bearer = checkBearerTokenUsage(authorization);
 				if (bearer != null) {
-					characteristics.setBearerTokenLeaked(urlDescrString(request.getRequestURL(), "Authorization/Bearer", Arrays.asList(bearer)));					
+					characteristics.setBearerTokenLeaked(urlDescrString(request.getRequestURL(), "Authorization/Bearer", Arrays.asList(bearer)));
+					tag(request, 2);
 				}
 			}
 			
@@ -76,6 +86,7 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 		
 		return request;
 	}
+	
 	
 	private String urlDescrString(String url, String headerField, List<String> headerContents) {
 		return url+" ("+headerField+": " + startOfHeaders(headerContents) + ")";
@@ -87,12 +98,12 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 		cookieCharacteristicsForDomain = cookieCharacteristicsForDomain != null ? cookieCharacteristicsForDomain : new CredentialExchangeCharacteristics();
 		
 		
-		ReportRecord cookie = new ReportRecord(cookieCharacteristicsForDomain.getResultNumberAsString(), cookieCharacteristicsForDomain.toString());
+		ReportRecord cookie = new ReportRecord(cookieCharacteristicsForDomain.getResultNumberAsString(), cookieCharacteristicsForDomain.toString(), getIdentifier(), domain, 0 );
 		
 		CredentialExchangeCharacteristics authorizationCharacteristicsForDomain = domainToUnprotectedAuthorizationLeakage.get(domain);
 		authorizationCharacteristicsForDomain = authorizationCharacteristicsForDomain != null ? authorizationCharacteristicsForDomain : new CredentialExchangeCharacteristics();
-		ReportRecord authorization = new ReportRecord(authorizationCharacteristicsForDomain.getResultNumberAsString(), authorizationCharacteristicsForDomain.toString());
-		ReportRecord bearer = new ReportRecord(authorizationCharacteristicsForDomain.getBearerInfoString(), authorizationCharacteristicsForDomain.getBearerTokenLeaked());
+		ReportRecord authorization = new ReportRecord(authorizationCharacteristicsForDomain.getResultNumberAsString(), authorizationCharacteristicsForDomain.toString(),getIdentifier(), domain, 1);
+		ReportRecord bearer = new ReportRecord(authorizationCharacteristicsForDomain.getBearerInfoString(), authorizationCharacteristicsForDomain.getBearerTokenLeaked(),getIdentifier(), domain, 2);
 
 		return Arrays.asList(cookie, authorization, bearer);
 	}
@@ -136,6 +147,17 @@ public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements Prox
 			stringBuffer.append("]...; ");
 		}
 		return stringBuffer.toString();
+	}
+
+	@Override
+	public String getIdentifier() {
+		return identifier;
+	}
+
+
+	@Override
+	public Integer getOrderNumberForOutput() {
+		return 2;
 	}
 
 }
@@ -238,8 +260,6 @@ class CredentialExchangeCharacteristics {
 		if (firstUnencryptedExchangeURLDescrString != null && firstEncryptedExchangeURLDescrString != null) {
 			return "2";
 		}
-		
-		
 		
 		return "invalid result";
 		

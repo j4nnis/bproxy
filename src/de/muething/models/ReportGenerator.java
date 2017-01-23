@@ -1,7 +1,9 @@
 package de.muething.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import de.muething.interfaces.ProxyRequestResponseAnalyzer;
 import de.muething.models.Report.Row;
@@ -23,8 +25,15 @@ public class ReportGenerator {
 		
 		ArrayList<ReportRecord> legend = new ArrayList<ReportRecord>();
 		
-		for (ProxyRequestResponseAnalyzer analyzer : proxy.getRequestResponseAnalyzers()) {
+		
+		
+		Object[] orderedOut = proxy.getRequestResponseAnalyzers().values().toArray(); 
+		Arrays.sort(orderedOut);
+		
+		for (int i = 0; i < orderedOut.length; i++) {
+			ProxyRequestResponseAnalyzer analyzer = (ProxyRequestResponseAnalyzer) orderedOut[i];
 			legend.addAll(analyzer.getTitlesRowForResults());
+
 		}
 		
 		report.legend = legend;
@@ -34,13 +43,13 @@ public class ReportGenerator {
 		
 		
 		Iterator<String> iterator = proxy.getDomainCounter().getDomains();
-		
 		while (iterator.hasNext()) {
 			String domain = iterator.next();
 			ArrayList<ReportRecord> row = new ArrayList<ReportRecord>();
 			
-			for (ProxyRequestResponseAnalyzer analyzer : proxy.getRequestResponseAnalyzers()) {
-				row.addAll(analyzer.createReportReportRowFor(proxy, domain));
+			for (int i = 0; i < orderedOut.length; i++) {
+				ProxyRequestResponseAnalyzer analyzer = (ProxyRequestResponseAnalyzer) orderedOut[i];
+				row.addAll(analyzer.createReportReportRowFor(proxy, domain));				
 			}
 			
 			rows.add(new Row(row));
@@ -49,6 +58,20 @@ public class ReportGenerator {
 		report.values = rows;
 		
 		return report;
+	}
+	
+	public static List<PersistedRequest> getProofFor(String proxyIdentifier, String domain, String analyzerIdentifier, int column) {
+		ManagedProxy proxy = ProxyManager.INSTANCE.getManagedProxy(proxyIdentifier);
+		if (proxy == null) {
+			return null;
+		}
+		 
+		ProxyRequestResponseAnalyzer analyzer = proxy.getAnalyzerForIdentifier(analyzerIdentifier);
+		if (analyzer != null) {
+			return analyzer.getProofForResultsFor(proxyIdentifier ,column, domain);
+		}
+		
+		return null;
 	}
 	
 	

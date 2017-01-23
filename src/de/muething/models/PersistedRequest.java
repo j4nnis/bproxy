@@ -3,7 +3,11 @@ package de.muething.models;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.net.ssl.SSLSocket;
 
@@ -32,21 +36,29 @@ public class PersistedRequest {
 	private String httpMethod;
 
 	@Embedded("requestHeaders")
-	private List<Headerfield> requestHeaders;
+	private List<Headerfield> requestHeaders = new LinkedList<>();
 
 	@Embedded("responseHeaders")
-	private List<Headerfield> responseHeaders;
+	private List<Headerfield> responseHeaders = new LinkedList<>();
 
 	private String requestBody;
 	
-	private String resonseBody;
+	private String responseBody;
 	
 	private String requestURL;
-	
+		
 	private String hostName;
 
 	private String tlsVersion;
+	
+	private Integer responseStatusCode;
 
+	private Map<String, Set<Integer>> tags;
+	
+	public PersistedRequest() {
+		
+	}
+	
 	public PersistedRequest(String proxyIdentifier, Integer sessionNo, HttpMessage message, Socket inSocket) {
 		this.uniqueProxyIdentifier = proxyIdentifier;
 		this.noOfSession = sessionNo;
@@ -58,10 +70,14 @@ public class PersistedRequest {
 		this.responseHeaders = this.convertHeaderfields(message.getResponseHeader().getHeaders());
 
 		this.requestBody = message.getRequestBody().toString();
-		this.resonseBody = message.getResponseBody().toString();
+		this.responseBody = message.getResponseBody().toString();
 		
 		this.requestURL = message.getRequestHeader().getURI().toString();
 		this.hostName = message.getRequestHeader().getHostName();
+		
+		this.responseStatusCode = message.getResponseHeader().getStatusCode();
+		
+		this.tags = new HashMap<>();
 		
 		if (inSocket instanceof SSLSocket) {
 			this.tlsVersion = ((SSLSocket)inSocket).getSession().getProtocol();
@@ -125,14 +141,6 @@ public class PersistedRequest {
 		this.requestBody = requestBody;
 	}
 
-	public String getResonseBody() {
-		return resonseBody;
-	}
-
-	public void setResonseBody(String resonseBody) {
-		this.resonseBody = resonseBody;
-	}
-
 	public String getHostName() {
 		return hostName;
 	}
@@ -149,11 +157,63 @@ public class PersistedRequest {
 		}
 		return fields;
 	}
+
+	public Integer getResponseStatusCode() {
+		return responseStatusCode;
+	}
+
+	public void setResponseStatusCode(Integer responseStatusCode) {
+		this.responseStatusCode = responseStatusCode;
+	}
+
+	public Map<String, Set<Integer>> getTags() {
+		return tags;
+	}
+
+	public void setTags(Map<String, Set<Integer>> tags) {
+		this.tags = tags;
+	}
+
+	public List<Headerfield> getRequestHeaders() {
+		return requestHeaders;
+	}
+
+	public void setRequestHeaders(List<Headerfield> requestHeaders) {
+		this.requestHeaders = requestHeaders;
+	}
+
+	public List<Headerfield> getResponseHeaders() {
+		return responseHeaders;
+	}
+
+	public void setResponseHeaders(List<Headerfield> responseHeaders) {
+		this.responseHeaders = responseHeaders;
+	}
+
+	public String getResponseBody() {
+		return responseBody;
+	}
+
+	public void setResponseBody(String responseBody) {
+		this.responseBody = responseBody;
+	}
 }
 
 class Headerfield {
-	private String key;
-	private String value;
+	private String key = "";
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	private String value = "";
+	
+	public Headerfield() {
+		
+	}
 	
 	public Headerfield(String key, String value) {
 		this.key = key;

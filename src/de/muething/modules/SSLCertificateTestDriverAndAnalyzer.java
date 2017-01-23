@@ -1,5 +1,6 @@
 package de.muething.modules;
 
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,11 +8,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.parosproxy.paros.control.Proxy;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
+import org.zaproxy.zap.ZapGetMethod;
 
 import de.muething.interfaces.HandshakeListener;
+import de.muething.interfaces.ProxyJITAnalyzer;
 import de.muething.interfaces.ProxyPreparator;
 import de.muething.interfaces.ProxyRequestResponseAnalyzer;
+import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.modules.ssl.DynamicHostNameSignedByUntrustedCertificateService;
 import de.muething.modules.ssl.DynamicHostNameUntrustedCertificateService;
@@ -19,10 +24,11 @@ import de.muething.modules.ssl.StaticHostNameCertficateService;
 import de.muething.modules.ssl.StaticHostNameUntrustedCertificateService;
 import de.muething.proxying.ManagedProxy;
 
-public class SSLCertificateTestDriverAndAnalyzer extends ProxyRequestResponseAnalyzer implements HandshakeListener, ProxyPreparator{
-	int sessionNo = -1;
-	
+public class SSLCertificateTestDriverAndAnalyzer extends ProxyRequestResponseAnalyzer implements HandshakeListener, ProxyPreparator, ProxyJITAnalyzer{
+	int sessionNo = -1;	
 	List<HashMap<String, List<Result>>> testResultsForDomains = new LinkedList<>();
+	
+	private static String identifier = "sslCertificateTestDriverAndAnalyzer";
 	
 	@Override
 	public void handshake(String domain, boolean success, String info) {
@@ -43,7 +49,6 @@ public class SSLCertificateTestDriverAndAnalyzer extends ProxyRequestResponseAna
 		
 		ArrayList<ReportRecord> records = new ArrayList<>();
 		
-		
 		int currSession = -1;
 		
 		for (HashMap<String, List<Result>> session : testResultsForDomains) {
@@ -51,6 +56,10 @@ public class SSLCertificateTestDriverAndAnalyzer extends ProxyRequestResponseAna
 
 			if (currSession < 2) {
 				continue;
+			}
+			
+			if (currSession > 5) {
+				break;
 			}
 
 			
@@ -106,6 +115,9 @@ public class SSLCertificateTestDriverAndAnalyzer extends ProxyRequestResponseAna
 		case 5: 
 			currentProxy.setCertificateService(StaticHostNameUntrustedCertificateService.getCachedService());
 			break;
+		default:
+			currentProxy.setCertificateService(CachedSslCertifificateServiceImpl.getService());
+			break;
 		}
 		
 		
@@ -151,4 +163,19 @@ public class SSLCertificateTestDriverAndAnalyzer extends ProxyRequestResponseAna
 		
 	}
 
+	@Override
+	public PersistedRequest willPersistRequest(PersistedRequest request, HttpMessage httpMessage, Socket inSocket,
+			ZapGetMethod method) {
+		return request;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return identifier;
+	}
+	
+	@Override
+	public Integer getOrderNumberForOutput() {
+		return 4;
+	}
 }

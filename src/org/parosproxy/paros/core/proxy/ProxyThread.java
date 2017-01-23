@@ -196,15 +196,11 @@ class ProxyThread implements Runnable {
 			
         } catch (MissingRootCertificateException e) {
         	throw new MissingRootCertificateException(e); // throw again, cause will be catched later.
-		} catch (Exception e) {
-			notifyHandshakeListeners(targethost, false, e.getMessage());
-			
+		} catch (Exception e) {			
 			// ZAP: transform for further processing 
-			throw new IOException("Error while establishing SSL connection for '" + targethost + "'!", e);
+			throw new IOException("Error while establishing SSL connection for '" + targethost + "':" + e.getMessage(), e);
 		}
-        
-		notifyHandshakeListeners(targethost, true, "handshake succeeded");
-        
+                
         httpIn = new HttpInputStream(inSocket);
         httpOut = new HttpOutputStream(inSocket.getOutputStream());
     }
@@ -260,6 +256,10 @@ class ProxyThread implements Runnable {
 			        
 			        firstHeader = httpIn.readRequestHeader(isSecure);
 			        processHttp(firstHeader, isSecure);
+			        
+			        if (isSecure){
+			        	notifyHandshakeListeners(firstHeader.getHostName(), true, "handshake succeeded");
+			        }
 				} catch (MissingRootCertificateException e) {
 					// Unluckily Firefox and Internet Explorer will not show this message.
 					// We should find a way to let the browsers display this error message.
@@ -287,6 +287,9 @@ class ProxyThread implements Runnable {
 		} catch (HttpException e) {
 			log.error(e.getMessage(), e);
 		} catch (IOException e) {
+			notifyHandshakeListeners(firstHeader.getHostName(), false, e.getMessage());
+
+			
 		    log.debug("IOException: ", e);
 		} finally {
             proxyThreadList.remove(thread);
