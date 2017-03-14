@@ -3,7 +3,7 @@ package de.muething.models;
 import de.muething.proxying.ManagedProxy;
 
 public class ExternalProxyDescription {
-	public String domain = "jane.local";
+	public String domain = "172.16.2.49";
 	public int port;
 	public String appName;
 	public int session;

@@ -1,7 +1,6 @@
 package de.muething.modules.ssl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -90,7 +89,6 @@ public class DynamicHostNameUntrustedCertificateService extends SslCertificateSe
      * Generates a certificate for {@code hostName} containing {@code keyPair}'s
      * public key, signed by {@code keyPair}'s private key.
      */
-    @SuppressWarnings("deprecation") // use the old Bouncy Castle APIs to reduce dependencies.
     private X509Certificate selfSignedCertificate(KeyPair keyPair, String hostName) throws GeneralSecurityException {
         X509V3CertificateGenerator generator = new X509V3CertificateGenerator();
         X500Principal issuer = new X500Principal("CN=" + hostName);

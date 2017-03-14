@@ -31,16 +31,18 @@ import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 import org.zaproxy.zap.extension.dynssl.SslCertificateUtils;
 import org.zaproxy.zap.utils.ClassLoaderUtil;
 
-import de.muething.proxying.BProxyListener;
-
 /**
  * Main class.
  *
  */
 public class Main extends ResourceConfig {
 	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://jane.local:8181/api/";
+	
+	public static final String BASE_IP = "192.168.2.112";
+	public static final String BASE_URI = "http://" + BASE_IP + ":8181/api/";
 
+	
+	
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
 	 * application.
@@ -135,8 +137,6 @@ public class Main extends ResourceConfig {
 	}
 
 	static Proxy proxy;
-
-	static BProxyListener listener;
 	
 	 public static ContextResolver<MoxyJsonConfig> createMoxyJsonResolver() {
 	        final MoxyJsonConfig moxyJsonConfig = new MoxyJsonConfig();

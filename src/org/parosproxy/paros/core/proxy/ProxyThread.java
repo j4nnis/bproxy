@@ -287,7 +287,13 @@ class ProxyThread implements Runnable {
 		} catch (HttpException e) {
 			log.error(e.getMessage(), e);
 		} catch (IOException e) {
-			notifyHandshakeListeners(firstHeader.getHostName(), false, e.getMessage());
+			if (firstHeader != null) {
+				notifyHandshakeListeners(firstHeader.getHostName(), false, e.getMessage());
+			} else {
+				System.err.println("here... ");
+				///notifyHandshakeListeners(firstHeader.getHostName(), false, e.getMessage());
+
+			}
 
 			
 		    log.debug("IOException: ", e);

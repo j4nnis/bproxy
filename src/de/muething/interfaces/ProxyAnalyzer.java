@@ -1,18 +1,21 @@
 package de.muething.interfaces;
 
+import java.net.Socket;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.mongodb.morphia.query.Query;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.ZapGetMethod;
 
 import de.muething.DatabaseDriver;
 import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.proxying.ManagedProxy;
 
-public abstract class ProxyRequestResponseAnalyzer implements Comparable<ProxyRequestResponseAnalyzer> {
+public abstract class ProxyAnalyzer implements Comparable<ProxyAnalyzer> {
 	public abstract List<ReportRecord> createReportReportRowFor(ManagedProxy proxy, String domain);
 	public abstract List<ReportRecord> getTitlesRowForResults();
 	
@@ -53,9 +56,11 @@ public abstract class ProxyRequestResponseAnalyzer implements Comparable<ProxyRe
 	public abstract Integer getOrderNumberForOutput();
 
 	@Override
-	public int compareTo(ProxyRequestResponseAnalyzer o) {
+	public int compareTo(ProxyAnalyzer o) {
 		return this.getOrderNumberForOutput().compareTo(o.getOrderNumberForOutput());
 	}
+	
+	public abstract PersistedRequest willPersistRequest(PersistedRequest request, HttpMessage httpMessage, Socket inSocket, ZapGetMethod method);
 	
 }
 	

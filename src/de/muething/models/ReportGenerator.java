@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import de.muething.interfaces.ProxyRequestResponseAnalyzer;
+import de.muething.interfaces.ProxyAnalyzer;
 import de.muething.models.Report.Row;
 import de.muething.proxying.ManagedProxy;
 import de.muething.proxying.ProxyManager;
@@ -31,7 +31,7 @@ public class ReportGenerator {
 		Arrays.sort(orderedOut);
 		
 		for (int i = 0; i < orderedOut.length; i++) {
-			ProxyRequestResponseAnalyzer analyzer = (ProxyRequestResponseAnalyzer) orderedOut[i];
+			ProxyAnalyzer analyzer = (ProxyAnalyzer) orderedOut[i];
 			legend.addAll(analyzer.getTitlesRowForResults());
 
 		}
@@ -48,7 +48,7 @@ public class ReportGenerator {
 			ArrayList<ReportRecord> row = new ArrayList<ReportRecord>();
 			
 			for (int i = 0; i < orderedOut.length; i++) {
-				ProxyRequestResponseAnalyzer analyzer = (ProxyRequestResponseAnalyzer) orderedOut[i];
+				ProxyAnalyzer analyzer = (ProxyAnalyzer) orderedOut[i];
 				row.addAll(analyzer.createReportReportRowFor(proxy, domain));				
 			}
 			
@@ -66,7 +66,7 @@ public class ReportGenerator {
 			return null;
 		}
 		 
-		ProxyRequestResponseAnalyzer analyzer = proxy.getAnalyzerForIdentifier(analyzerIdentifier);
+		ProxyAnalyzer analyzer = proxy.getAnalyzerForIdentifier(analyzerIdentifier);
 		if (analyzer != null) {
 			return analyzer.getProofForResultsFor(proxyIdentifier ,column, domain);
 		}

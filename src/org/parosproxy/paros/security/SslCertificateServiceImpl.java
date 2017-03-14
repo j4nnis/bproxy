@@ -126,7 +126,7 @@ public class SslCertificateServiceImpl implements SslCertificateService {
 		X500NameBuilder namebld = new X500NameBuilder(BCStyle.INSTANCE); 
 		namebld.addRDN(BCStyle.CN, hostname);
 		namebld.addRDN(BCStyle.OU, "Benevolent Proxy");
-		namebld.addRDN(BCStyle.O, "Dortmund Univerity of Applied Technology and Arts");
+		namebld.addRDN(BCStyle.O, "Dortmund University of Applied Sciences and Arts");
 		namebld.addRDN(BCStyle.C, "xx");
 		namebld.addRDN(BCStyle.EmailAddress, "jannis.muething004@stud.fh-dortmund.de");
 

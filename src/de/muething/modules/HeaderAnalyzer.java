@@ -9,13 +9,12 @@ import java.util.Vector;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZapGetMethod;
 
-import de.muething.interfaces.ProxyJITAnalyzer;
-import de.muething.interfaces.ProxyRequestResponseAnalyzer;
+import de.muething.interfaces.ProxyAnalyzer;
 import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.proxying.ManagedProxy;
 
-public class HeaderAnalyzer extends ProxyRequestResponseAnalyzer implements ProxyJITAnalyzer{
+public class HeaderAnalyzer extends ProxyAnalyzer{
 
 	private HashMap<String, CredentialExchangeCharacteristics> domainToUnprotectedCookieLeakage = new HashMap<>();
 	private HashMap<String, CredentialExchangeCharacteristics> domainToUnprotectedAuthorizationLeakage = new HashMap<>();

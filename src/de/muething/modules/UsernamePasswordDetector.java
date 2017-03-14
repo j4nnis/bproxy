@@ -10,15 +10,14 @@ import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZapGetMethod;
 
-import de.muething.interfaces.ProxyJITAnalyzer;
-import de.muething.interfaces.ProxyRequestResponseAnalyzer;
+import de.muething.interfaces.ProxyAnalyzer;
 import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.proxying.ManagedProxy;
 
-public class UsernamePasswordDetector extends ProxyRequestResponseAnalyzer implements ProxyJITAnalyzer {
+public class UsernamePasswordDetector extends ProxyAnalyzer {
 
-	Pattern usernamePasswordPattern = Pattern.compile("((password|username|user|pass) *[:=])+", Pattern.CASE_INSENSITIVE);
+	Pattern usernamePasswordPattern = Pattern.compile("((password|username|user|pass) *[\"':=]+)+", Pattern.CASE_INSENSITIVE);
 	
 	private HashMap<String, String> domainToUsernamePasswordLeakBody = new HashMap<>();
 	private HashMap<String, String> domainToUsernamePasswordLeakURL = new HashMap<>();

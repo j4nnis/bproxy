@@ -13,14 +13,13 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZapGetMethod;
 
 import de.muething.interfaces.HandshakeListener;
-import de.muething.interfaces.ProxyJITAnalyzer;
-import de.muething.interfaces.ProxyPreparator;
-import de.muething.interfaces.ProxyRequestResponseAnalyzer;
+import de.muething.interfaces.ProxySessionDriver;
+import de.muething.interfaces.ProxyAnalyzer;
 import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.proxying.ManagedProxy;
 
-public class DomainCounter extends ProxyRequestResponseAnalyzer implements ProxyJITAnalyzer, HandshakeListener, ProxyPreparator {
+public class DomainCounter extends ProxyAnalyzer implements HandshakeListener, ProxySessionDriver {
 	// mapping from domain to mapping from session to count
 	HashMap<String, HashMap<Integer, Integer>> counts = new HashMap<>();
 

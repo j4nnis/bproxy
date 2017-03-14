@@ -10,14 +10,13 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.ZapGetMethod;
 
 import de.muething.interfaces.HandshakeListener;
-import de.muething.interfaces.ProxyJITAnalyzer;
-import de.muething.interfaces.ProxyPreparator;
-import de.muething.interfaces.ProxyRequestResponseAnalyzer;
+import de.muething.interfaces.ProxySessionDriver;
+import de.muething.interfaces.ProxyAnalyzer;
 import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.proxying.ManagedProxy;
 
-public class SSLAnalyzer extends ProxyRequestResponseAnalyzer implements ProxyPreparator, ProxyJITAnalyzer, HandshakeListener{
+public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, HandshakeListener{
 	HashMap<String, String> domainToTLSVersion = new HashMap<>();
 	HashMap<String, String> domainsWithHandshakeFailures = new HashMap<>();
 	

@@ -13,9 +13,8 @@ import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
 import org.zaproxy.zap.ZapGetMethod;
 
 import de.muething.interfaces.HandshakeListener;
-import de.muething.interfaces.ProxyJITAnalyzer;
-import de.muething.interfaces.ProxyPreparator;
-import de.muething.interfaces.ProxyRequestResponseAnalyzer;
+import de.muething.interfaces.ProxySessionDriver;
+import de.muething.interfaces.ProxyAnalyzer;
 import de.muething.models.PersistedRequest;
 import de.muething.models.ReportRecord;
 import de.muething.modules.ssl.DynamicHostNameSignedByUntrustedCertificateService;
@@ -24,7 +23,7 @@ import de.muething.modules.ssl.StaticHostNameCertficateService;
 import de.muething.modules.ssl.StaticHostNameUntrustedCertificateService;
 import de.muething.proxying.ManagedProxy;
 
-public class SSLCertificateTestDriverAndAnalyzer extends ProxyRequestResponseAnalyzer implements HandshakeListener, ProxyPreparator, ProxyJITAnalyzer{
+public class SSLCertificateTestDriverAndAnalyzer extends ProxyAnalyzer implements HandshakeListener, ProxySessionDriver{
 	int sessionNo = -1;	
 	List<HashMap<String, List<Result>>> testResultsForDomains = new LinkedList<>();
 	
