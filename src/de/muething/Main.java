@@ -36,12 +36,9 @@ import org.zaproxy.zap.utils.ClassLoaderUtil;
  *
  */
 public class Main extends ResourceConfig {
-	// Base URI the Grizzly HTTP server will listen on
-	
+	public static final String LOCALPATH_BPROXYUI = "file:///Users/jannis/Developer/BSc/bproxyui/";	
 	public static final String BASE_IP = "192.168.2.112";
 	public static final String BASE_URI = "http://" + BASE_IP + ":8181/api/";
-
-	
 	
 	/**
 	 * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -164,7 +161,7 @@ public class Main extends ResourceConfig {
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
 				BASE_URI));
 
-		CLStaticHttpHandler staticHttpHandler = new CLStaticHttpHandler(new URLClassLoader(new URL[] {new URL("file:///Users/jannis/Developer/BSc/bproxyui/")}));
+		CLStaticHttpHandler staticHttpHandler = new CLStaticHttpHandler(new URLClassLoader(new URL[] {new URL(LOCALPATH_BPROXYUI)}));
 		server.getServerConfiguration().addHttpHandler(staticHttpHandler, "/");
 		
 		initClassLoader();
