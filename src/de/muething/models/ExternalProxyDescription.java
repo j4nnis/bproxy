@@ -1,9 +1,10 @@
 package de.muething.models;
 
+import de.muething.Main;
 import de.muething.proxying.ManagedProxy;
 
 public class ExternalProxyDescription {
-	public String domain = "172.16.2.49";
+	public String domain = Main.BASE_IP;
 	public int port;
 	public String appName;
 	public int session;
