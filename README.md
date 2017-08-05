@@ -1,6 +1,8 @@
+![Datenkrake](./images/Datenkrake.png)
+
 # BProxy
 
-BProxy is based on the ![https://www.owasp.org/index.php/ZAP](OWASP Zed Attack Proxy Project). The project is part of a scientific publication (a link will be provided as soon as it is available).
+BProxy is based on the [OWASP Zed Attack Proxy Project](https://www.owasp.org/index.php/ZAP). This project is part of a scientific publication (a link will be provided as soon as it is available).
 
 If there is interest, the project should be cleaned up and the deep integration into the ZAP proxy could be reduced.
 
@@ -12,27 +14,31 @@ With these objectives in mind BProxy was developed.
 
 
 ## Architectural overview
+
 The application is based on the Zed Attack proxy and was started as a fork of version 2.4.3. The main point of reusing the existing code was the proxying, inspection and dynamic certificate issuing codebase. Changes were made to dynamically change how certificates for requested domains are issued (to enable the TLS testing scenarios discussed earlier). A representational state transfer (REST) application programming interface (API) was engineered to expose automatic creation and control of proxies [35]. Additionally, a HTTP server exposes the Angular2 based user interface. This Web-Application interacts with the REST interface to control the proxy.
 The architecture of BProxy was engineered with extensibility in mind. Each single transport security consideration is tested for by a separated module. Modules can implement interfaces to register for call-backs and influence properties of TLS handshakes (for the TLS certificate validation tests). An analyser module inspects each request going through the proxy and generate a result on a per domain basis. The Username/Password Analyser for example is based around a regular expression that detect username and passwords within request URLs or bodies. The following example highlights the detected sections of a request:
 
+```
 HTTP POST http://example.org/login
 Body: username=alice&password=bob
+```
 
 The analyser persists the results saying that connections to example.org do contain usernames and/or passwords. Additionally, each request leading to a result in the final report is tagged by the analyser as interesting. This enables later checking of the test results displayed by BProxy.
 
 During each test of an application, the proxy works in sessions. Before the start of each session, the app should be relaunched. During a session, the user should interact with the app. Any registration/login actions should also be repeated if possible.
 This firstly enables the system to separate domains used by the application from other domains the device might communicate with (background tasks, changing ads displayed in the app). A domain present in more sessions is more likely to be connected to the application under testing. Secondly some sessions are used for the TLS tests. This is where the session driver modules are responsible to set up test conditions. Before each session the session drivers are asked to configure the proxy and prepare it for tests conducted in the following session. To prepare the proxy for each of the TLS certificate validation tests, a session driver sets up the proxy with a special certificate service. Certificate services are responsible for the generation of certificates for each of the domains requested. The default certificate service issues certificates derived from the CA certificate that can be downloaded from the BProxy test page and should be installed on a device used for testing. Other certificate services issue invalid certificates that should not pass validation (but do in some cases). The following Figure 1 illustrates the software architecture described.  
 
-![Figure 1 - Architectural overview of BProxy](/images/architecture.png)
+![Figure 1 - Architectural overview of BProxy](./images/architecture.png)
 
 
-After the necessary number of sessions, a list of domains will be displayed. The results are displayed on a per domain that the application communicated with. The modules mentioned earlier are responsible for generating these results. Were possible a user can also display all request-response pairs that are responsible for a certain result displayed in the list. This enables validation of the automatically generated results and further in-depth analysis. The package structure of the java project can be observed in Figure 2.
+After the necessary number of sessions, a list of domains will be displayed. The results are displayed on a per domain that the application communicated with. The modules mentioned earlier are responsible for generating these results. Were possible a user can also display all request-response pairs that are responsible for a certain result displayed in the list. This enables validation of the automatically generated results and further in-depth analysis. The package structure of the java project can be observed here:
 
-![Figure 2 - BProxy main project: package structure](/images/packageStructure.png)
+![Figure 2 - BProxy main project: package structure](./images/packageStructure.png)
 
 These are the packages added to the ZAP – Attack Proxy codebase. This codebase has been modified in parts to allow for further traffic observation (information regarding failing TLS handshakes) and enhanced control (improved and exchangeable certificate services).
 
 ## Installation
+
 The main BProxy project is set up as a Maven project. During development, the IDE Eclipse Neon was used. As a maven project, all dependencies are specified in a special file and will be installed by the build tool.
 
 Before running the project a Mongo database should be started. BProxy is setup to expects a database running on localhost:27018 and a collection called bproxy to be present.
@@ -41,18 +47,37 @@ Running the Main.java file in Eclipse starts up the webserver and the proxy. By 
 The frontend Angular2 based web application is served statically by a simple HTTP server. It is setup as an npm project. Should changes be necessary the npm install command can be used to reinstall all its dependencies. Respectively npm start compiles all typescript source files and starts a webserver serving only the web application.
 
 ## Usage
+
 As an objective during the development of BProxy was ease of use, the web interface guides the user through the process. Each test should consist of at least 6 sessions. The first two will filter out any background noise (any connections that just happen during the test in the background). The next 4 sessions will facilitate the TLS certificate validation tests.
 The results are presented as a table and on a per domain basis. Currently implemented modules enable the proxy to display the following columns:
-• Domain
-• Sessions
-• TLS version
-• Certificate pinning
-• Location (Geolocation of the domain requested)
-• Username and/or password leaks
-• Session hijacking (cookie headers)
-• Leaked credentials (authorization header)
-• OAuth (authorization header contents)
-• TLS certificate Tests 1 - 4
-Many test results can be selected to display all request/response pairs that lead to the result selected. A click on the domain itself fetches all request/response pairs exchanged with the selected domain. This is useful to look for information beyond what the reports explicitly states. Each request/response pair can also be selected for further inspecting (available information includes: TLS version, request URL, method, status code, request/response headers, request/response body). An exemplary output is shown in Figure 3.
 
-![Figure 3 - BProxy's UI: example results output](/images/output.png)
+* Domain
+* Sessions
+* TLS version
+* Certificate pinning
+* Location (Geolocation of the domain requested)
+* Username and/or password leaks
+* Session hijacking (cookie headers)
+* Leaked credentials (authorization header)
+* OAuth (authorization header contents)
+* TLS certificate Tests 1 - 4
+
+Many test results can be selected to display all request/response pairs that lead to the result selected. A click on the domain itself fetches all request/response pairs exchanged with the selected domain. This is useful to look for information beyond what the reports explicitly states. Each request/response pair can also be selected for further inspecting (available information includes: TLS version, request URL, method, status code, request/response headers, request/response body).
+
+![Figure 3 - BProxy's UI: example results output](./images/output.png)
+
+## License:
+
+Copyright [2017] [Jannis Müthing]
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
