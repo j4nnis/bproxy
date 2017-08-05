@@ -1,0 +1,27 @@
+<div id="content">
+    <div class="text-center">
+    </div>
+    <div [ngSwitch]="step">
+        <div *ngSwitchCase="1" class="stepContainer">
+            <stepOne></stepOne>
+
+
+            <button class="btn btn-primary continueButton" (click)="nextStep()">Continue</button>
+        </div>
+        <div *ngSwitchCase="2" class="stepContainer">
+            <stepTwo></stepTwo>
+
+            <button class="btn btn-primary continueButton" (click)="nextStep()">Continue</button>
+        </div>
+        <div *ngSwitchCase="3" class="stepContainer">
+            <stepThree></stepThree>
+
+            <button class="btn btn-primary continueButton" (click)="nextStep()">Finish and show results</button>
+        </div>
+        <div *ngSwitchDefault>
+            <results></results>
+
+            <button class="btn btn-primary continueButton" (click)="restart()">Restart</button>
+        </div>
+    </div>
+</div>

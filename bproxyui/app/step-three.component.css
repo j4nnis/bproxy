@@ -1,0 +1,16 @@
+.header h1 {
+    text-align: center;
+}
+
+#content {
+    margin: 8px;
+}
+
+.startNewSessionButton {
+    margin:0 auto;
+    display: block;
+}
+
+button {
+    white-space: pre;
+}

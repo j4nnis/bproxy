@@ -1,0 +1,55 @@
+h1 {
+	text-align: center;
+}
+
+.sidebarContent {
+	padding-right: 8px;
+	padding-left: 8px;
+	padding-bottom: 8px;
+}
+
+#container {
+
+}
+
+#proxyCertSection a {
+  text-align: center;
+  margin:0 auto;
+  display: block;
+}
+
+#appInfoSection {
+  margin-bottom: 10px;
+}
+
+/*#proxyCertSection {
+	background: #009199;
+}
+
+#proxyInfoSection {
+
+}
+
+#appInfoSection {
+	background: #009199;
+	padding-bottom: 8px;
+}*/
+
+/*a p{
+  border-bottom: 1px solid gray;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+  height: 20px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 5px;
+  background-color: #0f6bba;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+}
+
+a {
+	text-decoration: none;
+}*/

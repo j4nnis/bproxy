@@ -1,0 +1,55 @@
+<div class="header">
+	<h1>Results for App: {{bproxyService.bproxy.appName}}</h1>
+</div>
+<button class="btn btn-primary continueButton" (click)="getResults()">Refresh</button>
+
+<button class="btn btn-warning startNewSessionButton" (click)="newSession()">Start new Session
+<small>Session: <b>{{bproxyService.bproxy.session}}</b> running.</small></button>
+
+<div id="content">
+	<div class="table-responsive">
+		<table style="width:100%" class="table">
+			<tr>
+				<th *ngFor="let reportRecord of report.legend">
+					<span class="badge" ngbTooltip="{{reportRecord.detail}}" container="body">{{reportRecord.value}}</span>
+				</th>
+			</tr>
+			<tr *ngFor="let row of getSortedReportRecords()">
+				<td *ngFor="let reportRecord of row.row">
+					<span class="badge" ngbTooltip="{{reportRecord.detail}}" container="body" (click)="showProof(reportRecord)">{{reportRecord.value}}</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<br />
+	<h2>Requests</h2>
+	<div class="table-responsive">
+		<table style="width:100%" class="table">
+			<tr>
+				<th>
+					<span class="badge" container="body">Method</span>
+				</th>
+				<th>
+					<span class="badge" container="body">Request</span>
+				</th>
+				<th>
+					<span class="badge" container="body">Status</span>
+				</th>
+			</tr>
+			<tr *ngFor="let requestResponse of proof" (click)="showDetails(requestResponse)">
+				<td>
+					<span class="badge" container="body">{{requestResponse.httpMethod}}</span>
+				</td>
+				<td>
+					<span class="badge" container="body">{{requestResponse.requestURL}}</span>
+				</td>
+				<td>
+					<span class="badge" container="body">{{requestResponse.responseStatusCode}}</span>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+</div>
+
+<template ngbModalContainer></template>

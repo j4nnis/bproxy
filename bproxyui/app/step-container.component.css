@@ -1,0 +1,23 @@
+@media only screen and (min-width: 500px) {
+    .stepContainer {
+		width: 500px;
+		margin-left: auto;
+		margin-right: auto; 
+	}
+}
+
+.stepContainer {
+	background-color: #ededed;
+	padding: 8px;
+	border-radius: 5px;
+    -webkit-box-shadow: 0px 10px 10px -6px rgba(0,0,0,0.58);
+    -moz-box-shadow: 0px 10px 10px -6px rgba(0,0,0,0.58);
+	box-shadow: 0px 10px 10px -6px rgba(0,0,0,0.58);
+}
+
+.continueButton {
+	margin:0 auto;
+    display: block;
+}
+
+.progress { margin-left: auto; margin-right:auto; }

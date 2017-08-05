@@ -1,0 +1,15 @@
+<div class="header">
+	<h1>Step 3</h1>
+</div>
+<div id="content">
+
+<p>Now use the app. It will be best to use function that are likely to trigger network communication.</p>
+<p>One difficulty when analyzing the transport security of an app is to distinguish communication coming from - or going to - the app from all the other traffic you device produces.</p>
+<p>To mitigate this factor it is best to reproduce the test at least once. So even if some other app communicated during the first test, this will not happen during the next. Communication that occured during both tests is more likely to be from the app.</p>
+<p>Please be sure to actually quit the apps before redoing the test. Reinstalling the app would be perfect but might proof difficult without removing the proxy and setting it up again in the devices settings.</p>
+
+<p>Before you redo the test please hit the button below to start a new session. You can do this as many times as you like.</p>
+<button class="btn btn-warning startNewSessionButton" (click)="newSession()">Start new Session
+<small>Session: <b>{{bproxyService.bproxy.session}}</b> running.</small></button>
+
+</div>

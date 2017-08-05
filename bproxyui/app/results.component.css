@@ -1,0 +1,46 @@
+.header h1 {
+	text-align: center;
+}
+
+#content {
+	margin: 8px;
+}
+
+.startNewSessionButton {
+    margin:0 auto;
+    display: block;
+}
+
+.stepContainer {
+        width: 500px;
+        margin-left: auto;
+        margin-right: auto; 
+}
+
+button {
+    white-space: pre;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+th:first-child{
+    border-top-left-radius: 10px; 
+}
+th:last-child {
+    border-top-right-radius: 10px;
+}
+
+th {
+    background-color: #0f6bba;
+    color: white;
+}

@@ -1,0 +1,20 @@
+<div id="container">
+<div id="appInfoSection">
+	<div class="sidebarContent">
+		<input [(ngModel)]="bproxyService.bproxy.appName" placeholder="Name of the App" type="text" class="form-control"/>
+		<!--<button class="btn btn-primary" (click)="saveAppName()">Save</button> -->
+	</div>
+</div>
+<div id="proxyInfoSection">
+	<div class="sidebarContent">
+		<p>Proxy Running:</p>
+		<p type="text" class="form-control">{{bproxyService.bproxy.address()}}</p>
+	</div>
+</div>
+<div id="proxyCertSection">
+	<div class="sidebarContent">
+
+		<a href="{{bproxyService.bproxy.caCertDownloadLink}}"><p class="btn btn-link">Download CA Cert</p></a>
+	</div>
+</div>
+</div>

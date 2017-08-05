@@ -1,0 +1,52 @@
+<div id="content">
+	<h2> Request </h2>
+	<div class="table-responsive">
+
+		<table style="width:100%" class="table">
+			<tr>
+				<th>Method</th>
+				<th>URL</th>
+				<th>TLS Version</th>
+			</tr>
+			<tr>
+				<td>{{requestResponse.httpMethod}}</td>
+				<td>{{requestResponse.requestURL}}</td>
+				<td>{{requestResponse.tlsVersion}}</td>
+			</tr>
+			<tr>
+				<th>Headers</th>
+				<th></th>
+			</tr>
+			<tr *ngFor="let header of requestResponse.requestHeaders">
+				<td>{{header.key}}</td>
+				<td>{{header.value}}</td>
+			</tr>
+			<tr>
+				<th>Body</th>
+			</tr>
+		</table>
+	</div>
+	<p class="bodyContent">{{requestResponse.requestBody}}</p>
+
+	<br />
+
+	<h2>Response</h2>
+	<div class="table-responsive">
+
+		<table style="width:100%" class="table">
+			<tr>
+				<th>Headers</th>
+			</tr>
+			<tr *ngFor="let header of requestResponse.responseHeaders">
+				<td>{{header.key}}</td>
+				<td>{{header.value}}</td>
+			</tr>
+			<tr>
+				<th>Body</th>
+			</tr>
+		</table>
+	</div>
+	<p class="bodyContent">{{requestResponse.responseBody}}</p>
+
+
+</div>
