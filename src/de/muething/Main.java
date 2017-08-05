@@ -36,7 +36,7 @@ import org.zaproxy.zap.utils.ClassLoaderUtil;
  *
  */
 public class Main extends ResourceConfig {
-	public static final String LOCALPATH_BPROXYUI = "file:///Users/jannis/Developer/BSc/bproxyui/";	
+	public static final String LOCALPATH_BPROXYUI = "./bproxyui/";	
 	public static final String BASE_IP = "localhost";
 	public static final String BASE_URI = "http://" + BASE_IP + ":8181/api/";
 	
@@ -161,7 +161,7 @@ public class Main extends ResourceConfig {
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
 				BASE_URI));
 
-		CLStaticHttpHandler staticHttpHandler = new CLStaticHttpHandler(new URLClassLoader(new URL[] {new URL(LOCALPATH_BPROXYUI)}));
+		CLStaticHttpHandler staticHttpHandler = new CLStaticHttpHandler(new URLClassLoader(new URL[] {new File(LOCALPATH_BPROXYUI).toURI().toURL()}));
 		server.getServerConfiguration().addHttpHandler(staticHttpHandler, "/");
 		
 		initClassLoader();
