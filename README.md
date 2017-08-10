@@ -1,10 +1,18 @@
-![Datenkrake](./images/Datenkrake.png)
+# BProxy 
+###### _Client-focused transport security testing proxy_
 
-# BProxy
+<p align="center">
+<img src='./images/bproxyLogo2.png' width='300px' height='300px'>
+</p>
 
-BProxy is based on the [OWASP Zed Attack Proxy Project](https://www.owasp.org/index.php/ZAP). This project is part of a scientific publication (a link will be provided as soon as it is available).
+__BProxy__ is based on the [OWASP Zed Attack Proxy Project](https://www.owasp.org/index.php/ZAP). This project is part of a scientific article published in the [JMIR mHealth and u Health journal](https://mhealth.jmir.org):
 
-If there is interest, the project should be cleaned up and the deep integration into the ZAP proxy could be reduced.
+__[Client-focused security assessment and recommended practices to prevent or mitigate transport security issues in mHealth apps](https://mhealth.jmir.org)__ (This link will be updated as soon as the article is published)
+
+
+BProxy was developed to facilitate semi-automatic, client-focused transport security testing for mobile application and was used to test a number of Android and iOS mHealth applications. The proxy inspects all HTTP and HTTPS traffic and reports problematic findings to the user.
+
+If there is interest, the project could be cleaned up and the deep integration into the ZAP proxy could be reduced.
 
 ## Introduction
 
@@ -65,6 +73,54 @@ The results are presented as a table and on a per domain basis. Currently implem
 Many test results can be selected to display all request/response pairs that lead to the result selected. A click on the domain itself fetches all request/response pairs exchanged with the selected domain. This is useful to look for information beyond what the reports explicitly states. Each request/response pair can also be selected for further inspecting (available information includes: TLS version, request URL, method, status code, request/response headers, request/response body).
 
 ![Figure 3 - BProxy's UI: example results output](./images/output.png)
+
+## Evaluation
+
+Some of the column's values are not interpretable without further information. In the following possible values will be explained.
+
+### Session hijacking
+
+__Possible Values:__
+
+
+| Value  | Description |
+| ------------- | ------------- |
+| -1 | Cookie/Token not observed  |
+| 0 | Secure connection used and certificate-pinning used |
+| 1 | Secure connection used  |
+| 2 | Cookie or token is first transmitted using a secure connection, but later sent through unsecured connections.  |
+| 3 | Cookie/Token used on unprotected connections. Session hijacking easily possible. |
+
+### TLS certificate Tests
+
+The last four sessions in a test run are used for the certificate tests. During these, HTTPS certificates are spoofed in a way that should not be accepted by a client. If a client still validates such a certificate as correct and communicates through HTTPS connections, the client fails the respective certificate validation test.
+
+__The tests are performed in the following order:__
+
+| Session No.  | Description of issued certificate |
+| ------------- | ------------- |
+| 3 | correct host name, signed by an untrusted CA  |
+| 4 | correct host name, plain self signed certificate |
+| 5 | incorrect host name, trusted CA certificate  |
+| 6 | incorrect host name, plain self signed certificate  |
+
+## Credits:
+
+* Jannis Müthing, BSc, designed and developed this software and is a co-autor of the article.
+
+* Prof. Dr. C. M. Friedrich from the Dortmund University of Technology contributed to the design of the tests and is a one of the authors of the article.
+
+## Cite as
+
+This will be updated once the article is published by the JMIR mHealth and u Health journal.
+
+```
+Müthing J, Jäschke T, Friedrich CM
+Security assessment, risk prevention and mitigation techniques for transport security issues in mHealth apps JMIR Mhealth Uhealth 0000;##(##):e##
+URL: http://mhealth.jmir.org/0000/0/e0/
+doi:10.2196/mhealth.7791
+PMID:
+```
 
 ## License:
 
