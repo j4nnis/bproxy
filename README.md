@@ -106,9 +106,9 @@ __The tests are performed in the following order:__
 
 ## Credits:
 
-* Jannis Müthing, BSc, designed and developed this software and is a co-autor of the article.
+* Jannis Müthing, BSc, from the Dortmund University of Applied Sciences and Arts, Dortmund, Germany, designed and developed this software and is a co-autor of the article.
 
-* Prof. Dr. C. M. Friedrich from the Dortmund University of Technology contributed to the design of the tests and is a one of the authors of the article.
+* Prof. Dr. C. M. Friedrich from the Dortmund University of Applied Sciences and Arts, Dortmund, Germany, contributed to the design of the tests and is a one of the authors of the article.
 
 ## Cite as
 
