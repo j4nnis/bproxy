@@ -112,13 +112,10 @@ __The tests are performed in the following order:__
 
 ## Cite as
 
-This will be updated once the article is published by the JMIR mHealth and u Health journal.
-
 ```
 Müthing J, Jäschke T, Friedrich CM
-Client-focused security assessment and recommended practices to prevent or mitigate transport security issues in mHealth apps 
-JMIR Mhealth Uhealth 0000;##(##):e##
-URL: http://mhealth.jmir.org/0000/0/e0/
+Client-Focused Security Assessment and Recommended Practices to Prevent or Mitigate Transport Security Issues in mHealth Apps JMIR Mhealth Uhealth 2017;5(9):e147
+URL: https://mhealth.jmir.org/2017/9/e147/
 doi:10.2196/mhealth.7791
 PMID:
 ```
