@@ -7,7 +7,7 @@
 
 __BProxy__ is based on the [OWASP Zed Attack Proxy Project](https://www.owasp.org/index.php/ZAP). This project is part of a scientific article published in the [JMIR mHealth and u Health journal](https://mhealth.jmir.org):
 
-__[Client-focused security assessment and recommended practices to prevent or mitigate transport security issues in mHealth apps](https://mhealth.jmir.org)__ (This link will be updated as soon as the article is published)
+__[Client-Focused Security Assessment of mHealth Apps and Recommended Practices to Prevent or Mitigate Transport Security Issues](https://mhealth.jmir.org/2017/10/e147)__
 
 
 BProxy was developed to facilitate semi-automatic, client-focused transport security testing for mobile application and was used to test a number of Android and iOS mHealth applications. The proxy inspects all HTTP and HTTPS traffic and reports problematic findings to the user.
