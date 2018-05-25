@@ -3,6 +3,7 @@ package de.muething.modules;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.parosproxy.paros.control.Proxy;
@@ -17,7 +18,7 @@ import de.muething.models.ReportRecord;
 import de.muething.proxying.ManagedProxy;
 
 public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, HandshakeListener{
-	HashMap<String, String> domainToTLSVersion = new HashMap<>();
+	HashMap<String, HashSet<String>> domainToTLSVersion = new HashMap<>();
 	HashMap<String, String> domainsWithHandshakeFailures = new HashMap<>();
 	
 	int session = -1; 
@@ -29,23 +30,24 @@ public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, Ha
 			ZapGetMethod method) {
 
 		String tlsVersion = request.getTlsVersion();
-		tlsVersion = tlsVersion == null || tlsVersion.trim() == "" ? "-" : tlsVersion;
+		tlsVersion = tlsVersion == null || tlsVersion.trim() == "" ? "unsecured" : tlsVersion;
 		
-		String prevVersion = domainToTLSVersion.get(request.getHostName());
-		if (prevVersion != null && !prevVersion.equals(tlsVersion)){
-			tlsVersion = prevVersion + "\n" + tlsVersion;
+		HashSet<String> prevVersions = domainToTLSVersion.get(request.getHostName());
+		if (prevVersions == null){
+			prevVersions = new HashSet<String>();
+			domainToTLSVersion.put(request.getHostName(), prevVersions);
 		}
-		domainToTLSVersion.put(request.getHostName(), tlsVersion);
+		prevVersions.add(tlsVersion);
 		
 		return request;
 	}
 
 	@Override
 	public List<ReportRecord> createReportReportRowFor(ManagedProxy proxy, String domain) {
-		String v = domainToTLSVersion.get(domain);
+		HashSet<String> v = domainToTLSVersion.get(domain);
 		ReportRecord version = null;
 		if (v != null) {
-			version = new ReportRecord(v, "");
+			version = new ReportRecord(v.stream().reduce("", (a,b) -> a + "& \n" + b), "");
 		}else {
 			version = new ReportRecord("n/a", "a valid TLS connection was not observed");
 		}
@@ -69,13 +71,13 @@ public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, Ha
 	}
 	
 	private boolean hadSuccessfullSecuredConnection(String domain) {
-		if (domainToTLSVersion.containsKey(domain) && (!domainToTLSVersion.get(domain).equalsIgnoreCase("-") || !domainToTLSVersion.get(domain).equalsIgnoreCase(""))) {
+		if (domainToTLSVersion.containsKey(domain) && (!domainToTLSVersion.get(domain).contains("-") || !domainToTLSVersion.get(domain).contains(""))) {
 			return true;
 		} else return false;
 	}
 
 	
-	public static final List<ReportRecord> titlesRow = Arrays.asList(new ReportRecord("TLS versions", "TLS versions used by to connect to a domain"), new ReportRecord("Cert pinning used", "If cert pinning is used, the certificate installed on the users phone will not suffice to estublish the server as secure."));
+	public static final List<ReportRecord> titlesRow = Arrays.asList(new ReportRecord("TLS versions", "TLS versions used to connect to a domain"), new ReportRecord("Cert pinning used", "If cert pinning is used, the certificate installed on the users phone will not suffice to estublish the server as secure."));
 	
 	@Override
 	public List<ReportRecord> getTitlesRowForResults() {
