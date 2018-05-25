@@ -7,7 +7,7 @@
 
 __BProxy__ is based on the [OWASP Zed Attack Proxy Project](https://www.owasp.org/index.php/ZAP). This project is part of a scientific article published in the [JMIR mHealth and u Health journal](https://mhealth.jmir.org):
 
-__[Client-focused security assessment and recommended practices to prevent or mitigate transport security issues in mHealth apps](https://mhealth.jmir.org)__ (This link will be updated as soon as the article is published)
+__[Client-Focused Security Assessment of mHealth Apps and Recommended Practices to Prevent or Mitigate Transport Security Issues](https://mhealth.jmir.org/2017/10/e147)__
 
 
 BProxy was developed to facilitate semi-automatic, client-focused transport security testing for mobile application and was used to test a number of Android and iOS mHealth applications. The proxy inspects all HTTP and HTTPS traffic and reports problematic findings to the user.
@@ -106,20 +106,20 @@ __The tests are performed in the following order:__
 
 ## Credits:
 
-* Jannis Müthing, BSc, from the Dortmund University of Applied Sciences and Arts, Dortmund, Germany, designed and developed this software and is a co-autor of the article.
-
-* Prof. Dr. C. M. Friedrich from the Dortmund University of Applied Sciences and Arts, Dortmund, Germany, contributed to the design of the tests and is a one of the authors of the article.
+* J. Müthing, BSc, from the Dortmund University of Applied Sciences and Arts, Dortmund, Germany, designed and developed this software and is a co-author of the article.
+* T. Jäschke, Ph.D., from the FOM University of Applied Sciences, Essen, Germany & Dortmund University of Applied Sciences and Arts, Dortmund, Germany, contributed to the design of the tests and is a one of the authors of the article.
+* C. M. Friedrich, Ph.D., from the Dortmund University of Applied Sciences and Arts, Dortmund, Germany, contributed to the design of the tests and is a one of the authors of the article.
 
 ## Cite as
 
-This will be updated once the article is published by the JMIR mHealth and u Health journal.
-
 ```
-Müthing J, Jäschke T, Friedrich CM
-Security assessment, risk prevention and mitigation techniques for transport security issues in mHealth apps JMIR Mhealth Uhealth 0000;##(##):e##
-URL: http://mhealth.jmir.org/0000/0/e0/
-doi:10.2196/mhealth.7791
-PMID:
+Müthing J, Jäschke T, Friedrich CM
+Client-Focused Security Assessment of mHealth Apps and Recommended Practices to Prevent or Mitigate Transport Security Issues
+JMIR Mhealth Uhealth 2017;5(10):e147
+URL: https://mhealth.jmir.org/2017/10/e147
+DOI: 10.2196/mhealth.7791
+PMID: 29046271
+PMCID: 5666225
 ```
 
 ## License:
