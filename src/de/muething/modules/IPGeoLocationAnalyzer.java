@@ -23,7 +23,6 @@ public class IPGeoLocationAnalyzer extends ProxyAnalyzer implements HandshakeLis
 
 	private static Client client = ClientBuilder.newClient();
 	private static WebTarget target = client.target("http://ip-api.com/json/");
-
 	private HashMap<String, String> domainToNation = new HashMap<>();
 
 	private static String identifier = "ipGeoLocationAnalyzer";
@@ -85,9 +84,13 @@ public class IPGeoLocationAnalyzer extends ProxyAnalyzer implements HandshakeLis
 
 				@Override
 				public void run() {
-					GeoLocationServiceResponse response = target.path("{domain}").resolveTemplate("domain", domain)
-							.request().get(GeoLocationServiceResponse.class);
-					domainToNation.put(domain, response.toString());
+					try {
+						GeoLocationServiceResponse response = target.path("{domain}").resolveTemplate("domain", domain)
+								.request().get(GeoLocationServiceResponse.class);
+						domainToNation.put(domain, response.toString());						
+					} catch (Exception exception) {
+						domainToNation.put(domain, "unknown");						
+					}
 				}
 			});
 		}

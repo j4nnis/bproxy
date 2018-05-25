@@ -29,8 +29,12 @@ public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, Ha
 			ZapGetMethod method) {
 
 		String tlsVersion = request.getTlsVersion();
-		tlsVersion = tlsVersion == null || tlsVersion == "" ? "-" : tlsVersion;
-				
+		tlsVersion = tlsVersion == null || tlsVersion.trim() == "" ? "-" : tlsVersion;
+		
+		String prevVersion = domainToTLSVersion.get(request.getHostName());
+		if (prevVersion != null && !prevVersion.equals(tlsVersion)){
+			tlsVersion = prevVersion + "\n" + tlsVersion;
+		}
 		domainToTLSVersion.put(request.getHostName(), tlsVersion);
 		
 		return request;
@@ -38,7 +42,13 @@ public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, Ha
 
 	@Override
 	public List<ReportRecord> createReportReportRowFor(ManagedProxy proxy, String domain) {
-		ReportRecord version = new ReportRecord(domainToTLSVersion.get(domain), "");
+		String v = domainToTLSVersion.get(domain);
+		ReportRecord version = null;
+		if (v != null) {
+			version = new ReportRecord(v, "");
+		}else {
+			version = new ReportRecord("n/a", "a valid TLS connection was not observed");
+		}
 		
 		String handshakeFailureInfo = domainsWithHandshakeFailures.get(domain);
 		
@@ -65,7 +75,7 @@ public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, Ha
 	}
 
 	
-	public static final List<ReportRecord> titlesRow = Arrays.asList(new ReportRecord("TLS version", "the oldest version used by requests to a server behind this domain"), new ReportRecord("Cert pinning used", "If cert pinning is used, the certificate installed on the users phone will not suffice to estublish the server as secure."));
+	public static final List<ReportRecord> titlesRow = Arrays.asList(new ReportRecord("TLS versions", "TLS versions used by to connect to a domain"), new ReportRecord("Cert pinning used", "If cert pinning is used, the certificate installed on the users phone will not suffice to estublish the server as secure."));
 	
 	@Override
 	public List<ReportRecord> getTitlesRowForResults() {
@@ -75,9 +85,9 @@ public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, Ha
 	@Override
 	public void handshake(String domain, boolean success, String info) {
 		
-		System.err.println("domain: "+ domain + ": " + success);
+		System.err.println("domain: "+ domain + ": " + success + session + domainsWithHandshakeFailures.containsKey(domain) );
 		
-			if 		((session < 2 && session >= 0) && 
+			if 		((session >= 0 && (session < 2 || session >= 5)) && 
 					!success &&
 					!domainsWithHandshakeFailures.containsKey(domain))
 			{
