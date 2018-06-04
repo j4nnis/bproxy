@@ -47,7 +47,7 @@ public class SSLAnalyzer extends ProxyAnalyzer implements ProxySessionDriver, Ha
 		HashSet<String> v = domainToTLSVersion.get(domain);
 		ReportRecord version = null;
 		if (v != null) {
-			version = new ReportRecord(v.stream().reduce("", (a,b) -> a + "& \n" + b), "");
+			version = new ReportRecord(v.stream().reduce("", (a,b) -> a + (a.equals("") ? "" : "& \n") + b), "");
 		}else {
 			version = new ReportRecord("n/a", "a valid TLS connection was not observed");
 		}
