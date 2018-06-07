@@ -129,7 +129,7 @@ public class HeaderAnalyzer extends ProxyAnalyzer{
 		authorizationCharacteristicsForDomain = authorizationCharacteristicsForDomain != null ? authorizationCharacteristicsForDomain : new CredentialExchangeCharacteristics();
 		ReportRecord authorization = new ReportRecord(authorizationCharacteristicsForDomain.getResultNumberAsString(), authorizationCharacteristicsForDomain.toString(),getIdentifier(), domain, 1);
 		ReportRecord bearer = new ReportRecord(authorizationCharacteristicsForDomain.getBearerInfoString(), authorizationCharacteristicsForDomain.getBearerTokenLeaked(),getIdentifier(), domain, 2);
-		ReportRecord dnt = new ReportRecord(this.domainToDnt.get(domain) != null ? this.domainToDnt.get(domain) : "n/a", "0: tracking allowed by all requests, 1: tracking disallowed by all requests, n/a: DNT header not observed, mixed: some allowed, some disallowed or did not include the header;",getIdentifier(), domain, 3);
+		ReportRecord dnt = new ReportRecord(this.domainToDnt.get(domain) != null ? this.domainToDnt.get(domain) : "n/a", "0: tracking allowed by all requests, 1: tracking disallowed by all requests, n/a: DNT header not observed, mixed: some allowed, some disallowed or did not include the header.",getIdentifier(), domain, 3);
 
 		return Arrays.asList(cookie, authorization, bearer, dnt);
 	}

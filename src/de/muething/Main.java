@@ -37,7 +37,7 @@ import org.zaproxy.zap.utils.ClassLoaderUtil;
  */
 public class Main extends ResourceConfig {
 	public static final String LOCALPATH_BPROXYUI = "./bproxyui/";	
-	public static final String BASE_IP = "192.168.0.25";
+	public static final String BASE_IP = "localhost";
 	public static final String BASE_URI = "http://" + BASE_IP + ":8181/api/";
 	
 	/**
