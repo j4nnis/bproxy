@@ -17,7 +17,10 @@ import de.muething.proxying.ManagedProxy;
 public class HeaderAnalyzer extends ProxyAnalyzer{
 
 	private HashMap<String, CredentialExchangeCharacteristics> domainToUnprotectedCookieLeakage = new HashMap<>();
+	
 	private HashMap<String, CredentialExchangeCharacteristics> domainToUnprotectedAuthorizationLeakage = new HashMap<>();
+	
+	private HashMap<String, String> domainToDnt = new HashMap<>();
 
 	private static String identifier = "headerAnalyzer";
 	
@@ -83,6 +86,29 @@ public class HeaderAnalyzer extends ProxyAnalyzer{
 		
 		domainToUnprotectedAuthorizationLeakage.put(request.getHostName(), characteristics);
 		
+		
+		String dntString = httpMessage.getRequestHeader().getHeader("DNT");
+		if (dntString != null) {
+			dntString = dntString.trim();
+			String prevValue = this.domainToDnt.get(request.getHostName());
+			
+			if ( prevValue != null && !prevValue.equals(dntString) ) {
+				this.domainToDnt.put(request.getHostName(), "mixed");
+			} else {
+				this.domainToDnt.put(request.getHostName(), dntString);
+			}
+			
+			tag(request, 3);
+		} else {
+			String prevValue = this.domainToDnt.get(request.getHostName());
+			if ( prevValue != null && !prevValue.equals("n/a") ) {
+				this.domainToDnt.put(request.getHostName(), "mixed");
+			} else {
+				this.domainToDnt.put(request.getHostName(), "n/a");
+			}
+		}
+		
+		
 		return request;
 	}
 	
@@ -103,12 +129,13 @@ public class HeaderAnalyzer extends ProxyAnalyzer{
 		authorizationCharacteristicsForDomain = authorizationCharacteristicsForDomain != null ? authorizationCharacteristicsForDomain : new CredentialExchangeCharacteristics();
 		ReportRecord authorization = new ReportRecord(authorizationCharacteristicsForDomain.getResultNumberAsString(), authorizationCharacteristicsForDomain.toString(),getIdentifier(), domain, 1);
 		ReportRecord bearer = new ReportRecord(authorizationCharacteristicsForDomain.getBearerInfoString(), authorizationCharacteristicsForDomain.getBearerTokenLeaked(),getIdentifier(), domain, 2);
+		ReportRecord dnt = new ReportRecord(this.domainToDnt.get(domain) != null ? this.domainToDnt.get(domain) : "n/a", "0: tracking allowed by all requests, 1: tracking disallowed by all requests, n/a: DNT header not observed, mixed: some allowed, some disallowed or did not include the header;",getIdentifier(), domain, 3);
 
-		return Arrays.asList(cookie, authorization, bearer);
+		return Arrays.asList(cookie, authorization, bearer, dnt);
 	}
 
 	
-	public static final List<ReportRecord> titlesRow = Arrays.asList(new ReportRecord("Session hijacking", "Cookie header field"), new ReportRecord("Leaks credentials", "Authorization header field usage."), new ReportRecord("OAuth", ""));
+	public static final List<ReportRecord> titlesRow = Arrays.asList(new ReportRecord("Session hijacking", "Cookie header field"), new ReportRecord("Leaks credentials", "Authorization header field usage."), new ReportRecord("OAuth", ""), new ReportRecord("DNT", "presence and value of the DNT header field"));
 	
 	@Override
 	public List<ReportRecord> getTitlesRowForResults() {
